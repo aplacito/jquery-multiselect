@@ -1,0 +1,19 @@
+.multiSelect {
+	padding:2px 4px;
+	width:200px;
+	font-weight:normal !important;
+	display: inline;
+}
+
+.multiSelectOptions {
+	width:208px; /* 200px + 8px padding on both sides */
+	max-height: 150px;
+	overflow:auto;
+	display:none;
+}
+
+.multiSelectOptions label { padding:3px 5px; display:block; }
+.multiSelectOptions label input { position:relative; top:1px }
+
+.multiSelectOptions label.selectAll { text-align:center }
+.multiSelectOptions label.ui-state-hover input { left:-1px; }
