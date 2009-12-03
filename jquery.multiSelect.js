@@ -20,7 +20,7 @@
 		 // Initialize each multiSelect
 		$(this).each(function(){
 			var $select = $(this), html = '';
-			html += '<input type="text" readonly="readonly" class="multiSelect" value="" style="cursor: default;" />';
+			html += '<input type="text" readonly="readonly" class="multiSelect ui-corner-all" value="" style="cursor: default;" />';
 			html += '<div class="multiSelectOptions">';
 			if(o.selectAll) html += '<label class="selectAll ui-widget-header"><a href="">Check All</a> &nbsp;/&nbsp; <a href="">Uncheck All</a></label>';
 			
@@ -29,16 +29,16 @@
 				var value = $this.val();
 
 				if(value.length > 0){
-					html += '<label><input type="checkbox" name="' + $select.attr('name') + '" value="' + value.length + '"';
+					html += '<label><span><input type="checkbox" name="' + $select.attr('name') + '" value="' + value.length + '"';
 					if($this.is(':selected')) html += ' checked="checked"';
-					html += ' />' + $this.html() + '</label>';
+					html += ' />' + $this.html() + '</span></label>';
 				}
 			});
 			html += '</div>';
 
 			// cache objects
 			$select  = $select.after(html).next('input.multiSelect');
-			$options = $select.next('div.multiSelectOptions').addClass('ui-widget-content ui-corner-bl ui-corner-br');
+			$options = $select.next('div.multiSelectOptions').addClass('ui-widget-content ui-corner-all');
 			$inputs  = $options.find('input:checkbox');
 			
 			// Determine if Select All should be checked initially
@@ -88,7 +88,7 @@
 				updateSelected($this,o);
 			})
 			.find('label:not(label.selectAll)')
-			//.addClass('ui-helper-reset ui-state-default')
+			.addClass('ui-state-default')
 			.mouseover(function(){
 				$(this).addClass('ui-state-hover');
 			})

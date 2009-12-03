@@ -7,13 +7,14 @@
 
 .multiSelectOptions {
 	width:208px; /* 200px + 8px padding on both sides */
-	max-height: 150px;
+	max-height:150px;
 	overflow:auto;
 	display:none;
 }
 
-.multiSelectOptions label { padding:3px 5px; display:block; }
+.multiSelectOptions label { display:block; padding:3px }
 .multiSelectOptions label input { position:relative; top:1px }
 
 .multiSelectOptions label.selectAll { text-align:center }
-.multiSelectOptions label.ui-state-hover input { left:-1px; }
+.multiSelectOptions label.ui-state-default { border-top:0; border-bottom:0 }
+
