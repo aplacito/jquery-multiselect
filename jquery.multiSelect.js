@@ -63,66 +63,13 @@
 			})
 			.blur(function(){
 				$(this).removeClass('ui-state-focus');
-			});
-			
-
-			// option events
-			$options
-			.each(function(){
-				var $this = $(this);
-				$this.find('input:checked').parent();
-				updateSelected($this,o);
 			})
-			.find('label:not(label.selectAll)')
-			.addClass('ui-state-default')
-			.mouseover(function(){
-				$(this).addClass('ui-state-hover');
-			})
-			.mouseout(function() {
-				$(this).removeClass('ui-state-hover');
-			})
-			.find('input:checkbox:not(input.selectAll)')
-			.click(function(){
-				var $this = $(this), $container = $(this).closest('div.multiSelectOptions'), $label = $this.parent();
-				
-				updateSelected($container,o);
-				
-				if(this.checked){
-					$label.addClass('ui-state-active');
-				} else {
-					$label.removeClass('ui-state-active');
-				}
-								$container.prev('a.multiSelect').focus();
-				//$container.find('label').find('input:checked').parent();
-				//if(!this.checked) $container.find('input:checkbox.selectAll').attr('checked', 'checked').parent().removeClass('ui-state-active');
-				o.callback.call($this);
-			})
-			.parent()
-			.siblings('label.selectAll')
-			.find('a')
-			.click(function(){
-				var $this = $(this),
-					$container = $this.closest('div.multiSelectOptions'),
-					$inputs = $container.find('input:checkbox');
-				
-				if($this.hasClass("multiselect-checkall")){
-					$inputs.attr('checked', 'checked').parent().addClass('ui-state-active'); 
-				} else {
-					$inputs.removeAttr('checked').parent().removeClass('ui-state-active');
-				};
-				
-				updateSelected($container,o);
-				return false;
-			});
-			
-			
-			// Keyboard
-			$select.find("input").keydown(function(e){
+			.find("input")
+			.keydown(function(e){
 				var $this = $(this);
 				var $container = $this.parent().next('.multiSelectOptions');
 				var $checkbox;
-				
-				// Is dropdown visible?
+
 				if($container.is(':visible')){
 				
 					switch(e.keyCode){
@@ -145,13 +92,11 @@
 						case 40:
 							if(!$container.find('label').hasClass('ui-state-hover')){
 								$container.find('label:first').addClass('ui-state-hover');
-							} else {
-								// Move down, cycle to top if on bottom
+							} else {								// Move down, cycle to top if on bottom
 								$container.find('label.ui-state-hover').removeClass('ui-state-hover').next('label').addClass('ui-state-hover');
 								if( !$container.find('label').hasClass('ui-state-hover') ) {
 									$container.find('label:first').addClass('ui-state-hover');
-								};
-							};
+								};							};
 						
 							// adjust the viewport if necessary
 							adjustViewport($this);
@@ -161,8 +106,7 @@
 						// up
 						case 38:
 							if(!$container.find('label').hasClass('ui-state-hover')){
-								// Default to first item
-								$container.find('label:first').addClass('ui-state-hover');
+								// Default to first item								$container.find('label:first').addClass('ui-state-hover');
 							} else {
 								// Move up, cycle to bottom if on top
 								$container.find('label.ui-state-hover input:checkbox').removeClass('ui-state-hover').prev('label').addClass('ui-state-hover');
@@ -241,7 +185,57 @@
 				};
 			});
 			
-			// Apply bgiframe if available on IE6
+
+			// option events
+			$options
+			.each(function(){
+				var $this = $(this);
+				$this.find('input:checked').parent();
+				updateSelected($this,o);
+			})
+			.find('label:not(label.selectAll)')
+			.addClass('ui-state-default')
+			.mouseover(function(){
+				$(this).addClass('ui-state-hover');
+			})
+			.mouseout(function() {
+				$(this).removeClass('ui-state-hover');
+			})
+			.find('input:checkbox:not(input.selectAll)')
+			.click(function(){
+				var $this = $(this), $container = $(this).closest('div.multiSelectOptions'), $label = $this.parent();
+				
+				updateSelected($container,o);
+				
+				if(this.checked){
+					$label.addClass('ui-state-active');
+				} else {
+					$label.removeClass('ui-state-active');
+				}
+								$container.prev('a.multiSelect').focus();
+				//$container.find('label').find('input:checked').parent();
+				//if(!this.checked) $container.find('input:checkbox.selectAll').attr('checked', 'checked').parent().removeClass('ui-state-active');
+				o.callback.call($this);
+			})
+			.parent()
+			.siblings('label.selectAll')
+			.find('a')
+			.click(function(){
+				var $this = $(this),
+					$container = $this.closest('div.multiSelectOptions'),
+					$inputs = $container.find('input:checkbox');
+				
+				if($this.hasClass("multiselect-checkall")){
+					$inputs.attr('checked', 'checked').parent().addClass('ui-state-active'); 
+				} else {
+					$inputs.removeAttr('checked').parent().removeClass('ui-state-active');
+				};
+				
+				updateSelected($container,o);
+				return false;
+			});
+			
+			// apply bgiframe if available on IE6
 			if($.fn.bgiframe) $options.bgiframe();
 			
 			// remove the original form element
@@ -263,7 +257,6 @@
 	this.hideOptions = function($this){
 		$this.removeClass('ui-state-active').next('div.multiSelectOptions').hide();
 	};
-	
 	
 	// Show the dropdown
 	this.showOptions = function($this){
