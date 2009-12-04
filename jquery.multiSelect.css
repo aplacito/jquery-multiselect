@@ -1,13 +1,19 @@
 .multiSelect {
-	padding:2px 4px;
 	width:200px;
 	font-weight:normal !important;
-	display: inline;
+	display:inline-block;
+	cursor:default;
+	text-decoration:none !important;
+	padding:0;
 }
 
+
+.multiSelect input { float:left; width:90%; padding:3px 6px; border:none; cursor:default; background:transparent }
+.multiSelect img { float:right; margin-top:-18px; }
+
 .multiSelectOptions {
-	width:208px; /* 200px + 8px padding on both sides */
-	max-height:150px;
+	width:200px;
+	max-height:175px;
 	overflow:auto;
 	display:none;
 }
