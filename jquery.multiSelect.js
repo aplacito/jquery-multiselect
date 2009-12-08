@@ -11,27 +11,24 @@
  *
 */
 
-(function($){
-	
-	$.fn.multiSelect = function(options){
-		
+(function($){	$.fn.multiSelect = function(options){
 		var o = $.extend({}, $.fn.multiSelect.options, options);
 
-		 // Initialize each multiSelect
-		$(this).each(function(){
+		return this.each(function(){
 			var $select = $(this), html = '';
+			
 			html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
 			html += '<div class="multiSelectOptions ui-widget-content ui-corner-all">';
 			if(o.selectAll) html += '<label class="selectAll ui-widget-header"><a href="" class="multiselect-checkall">Check All</a> &nbsp;/&nbsp; <a href="" class="multiselect-uncheckall">Uncheck All</a></label>';
 			
-			$select.find('option').each(function(el,val){
-				var $this = $(this), value = $this.val();
+			$select.find('option').each(function(){
+				var $this = $(this), value = $this.val(), len = value.length;
 
-				if(value.length > 0){
-					html += '<label><input type="checkbox" name="' + $select.attr('name') + '" value="' + value.length + '"';
+				if(len > 0){
+					html += '<label><input type="checkbox" name="' + $select.attr('name') + '" value="' + len + '"';
 					if($this.is(':selected')) html += ' checked="checked"';
 					html += ' />' + $this.html() + '</label>';
-				}
+				};
 			});
 			html += '</div>';
 			
@@ -51,11 +48,7 @@
 				toggleArrow();
 			})
 			.click(function(e){
-				if($(this).hasClass('ui-state-active') ) {
-					hideOptions($(this));
-				} else {
-					showOptions($(this));
-				};
+				showOptions();
 				e.preventDefault();
 			})
 			.focus(function(){
@@ -134,7 +127,7 @@
 									// check all
 									$container.find('input:checkbox').attr('checked','checked').parent().addClass('checked');
 								};
-								updateSelected($container,o);
+								updateSelected($container);
 								o.callback.call($this);
 								return false;
 							};
@@ -143,7 +136,7 @@
 								// Uncheck
 								$checkbox.removeAttr('checked');
 								$container.find('label').removeClass('ui-state-active').find('input:checked').parent().addClass('ui-state-active');
-								updateSelected($container,o);
+								updateSelected($container);
 								
 								// Select all status can't be checked at this point
 								$container.find('label:checkbox.selectAll').attr('checked', 'checked').parent().removeClass('ui-state-active');
@@ -152,7 +145,7 @@
 								// Check
 								$checkbox.attr('checked', 'checked');
 								$container.find('label').removeClass('ui-state-active').find('label:checked').parent().addClass('ui-state-active');
-								updateSelected($container,o);
+								updateSelected($container);
 								o.callback.call($this);
 							};
 							return false;
@@ -187,6 +180,7 @@
 			
 
 			// option events
+			
 			$options
 			.each(function(){
 				var $this = $(this);
@@ -235,9 +229,8 @@
 				return false;
 			});
 			
-			// apply bgiframe if available on IE6
-			if($.fn.bgiframe) $options.bgiframe();
-			
+			// apply bgiframe if available
+			if($.fn.bgiframe) $options.bgiframe();			
 			// remove the original form element
 			$select.prev().remove();
 			
@@ -249,95 +242,112 @@
 					$arrow.attr('src', 'arrow.gif');
 				};
 			};
-		});
-
-	};
-	
-	// Hide the dropdown
-	this.hideOptions = function($this){
-		$this.removeClass('ui-state-active').next('div.multiSelectOptions').hide();
-	};
-	
-	// Show the dropdown
-	this.showOptions = function($this){
-		var offset, timer, listHeight = 0;
-		offset = $this.position();
-		
-		// Hide any open option boxes
-		hideOptions( $('a.multiSelect') );
-		
-		// show the options div, position it, add classes
-		$this
-		.addClass('ui-state-active')
-		.next('div.multiSelectOptions')
-		.css({ position:'absolute', top: offset.top + $this.outerHeight() + 'px', left: offset.left + 'px' })
-		.show()
-		.find('label')
-		.removeClass('ui-state-hover');
-		
-		/* IE6 does not support max-height */
-		if($.browser.msie && typeof document.body.style.maxHeight === "undefined"){
-			var $options = $this.next('div.multiSelectOptions');
 			
-			$options.children().each(function(){
-				listHeight += this.offsetHeight;
-			});
+			function showOptions(){
+				var offset = $select.position(), timer, listHeight = 0;
+				
+				// FIXME: why??
+				$options = $select.next('div.multiSelectOptions');
+				
+				// hide options if open
+				if($select.hasClass('ui-state-active')){
+					hideOptions();
+					return;
+				};
+				
+				// show the options div, position it, add classes
+				$select
+				.addClass('ui-state-active')
+				.next('div.multiSelectOptions')
+				.css({ position:'absolute', top: offset.top + $select.outerHeight() + 'px', left: offset.left + 'px' })
+				.show()
+				.find('label')
+				.removeClass('ui-state-hover');
+		
+				/* IE6 does not support max-height */
+				if($.browser.msie && typeof document.body.style.maxHeight === "undefined"){
+					//var $options = $select.next('div.multiSelectOptions');
+					
+					$options.children().each(function(){
+						listHeight += this.offsetHeight;
+					});
 			
-			// TODO - made this height configurable
-			if(listHeight > 175) $options.css({ height: '175px' });
-		};
-		
-		// close on hover out
-		multiSelectCurrent = $this;
-		$this.next('.multiSelectOptions').hover(function(){
-			clearTimeout(timer);
-		}, function(){
-			// TODO make the ms option configurable
-			timer = setTimeout('hideOptions(multiSelectCurrent); multiSelectCurrent.unbind("hover");', 100);
-		});
-		
-	};
-	
-	// Update the textbox with the total number of selected items
-	this.updateSelected = function($container,o){
-		var s = '', display = '';
-		var $checked = $container.find('input:checkbox:checked');
-		var $input = $container.prev('a.multiSelect').find('input');
-		var count = $checked.not('.selectAll').length;
-		
-		if(count == 0){
-			$input.val( o.noneSelected );
-		} else {
-			if(o.oneOrMoreSelected === '*'){
-				$checked.each(function(){
-					var text = $(this).parent().text();
-					if(text !== o.selectAllText) display += text + ', ';
-				});
-				display = display.substr(0, display.length - 2);
-				$input.val( display );
-			} else {
-				$input.val( o.oneOrMoreSelected.replace('%', count) );
+					// TODO - made this height configurable
+					if(listHeight > 175) $options.css({ height: '175px' });
+				};
+				
+				// close on hover out
+				$options.hover(
+					function(){
+						clearTimeout(timer);
+					}, 
+					function(){
+						timer = setTimeout(function(){
+							hideOptions(); 
+							$select.unbind("hover");
+						}, o.delay);
+					}
+				);			};
+			
+			function hideOptions(){
+				$select.removeClass('ui-state-active');
+				$options.hide();
 			};
-		};
-	};
+			
+			function updateSelected($container){
+				var s = '',
+				    display = '',
+				    $checked = $container.find('input:checkbox:checked'),
+				    $input = $container.prev('a.multiSelect').find('input'),
+				    count = $checked.not('input.selectAll').length;
 	
-	// Ensures that the selected item is always in the visible portion of the dropdown (for keyboard controls)
-	this.adjustViewport = function(el){
-		// Calculate positions of elements
-		var $container = $(el).parent().next('div.multiSelectOptions'), i = 0, selectionTop = 0, selectionHeight = 0;
+				if(count === 0){
+					$input.val( o.noneSelected );
+				} else {
+					if(o.oneOrMoreSelected === '*'){
+						$checked.each(function(){
+							var text = $(this).parent().text();
+							if(text !== o.selectAllText) display += text + ', ';
+						});
+						display = display.substr(0, display.length - 2);
+						$input.val( display );
+					} else {
+						$input.val( o.oneOrMoreSelected.replace('%', count) );
+					};
+				};
+			};
+			
+			function adjustViewport(el){
+				var $container = $(el).parent().next('div.multiSelectOptions'),
+				    i = 0,
+				    selectionTop = 0,
+				    selectionHeight = 0,
+				    divScroll,
+				    divHeight;
+				
+				$container
+				.find('label')
+				.each(function(){
+					var $this = $(this);
 		
-		$container
-		.find('label')
-		.each(function(){
-			var $this = $(this);
-			if($this.hasClass('ui-state-hover')){ selectionTop = i; selectionHeight = $this.outerHeight(); return; }
-			i += $this.outerHeight();
+					if($this.hasClass('ui-state-hover')){ 
+						selectionTop = i; 
+						selectionHeight = $this.outerHeight(); 
+						return; 
+					};
+		
+					i += $this.outerHeight();
+				});
+	
+				divScroll = $container.scrollTop();
+				divHeight = $container.height();
+	
+				// adjust the dropdown scroll position
+				$container.scrollTop(selectionTop - ((divHeight / 2) - (selectionHeight / 2)));
+			};
+			
+			
 		});
-		var divScroll = $container.scrollTop();
-		var divHeight = $container.height();
-		
-		// Adjust the dropdown scroll position
-		$container.scrollTop(selectionTop - ((divHeight / 2) - (selectionHeight / 2)));
 	};
 	
 	// default options
@@ -347,6 +357,7 @@
 		noneSelected: 'Select options',
 		oneOrMoreSelected: '% selected',
 		height: 200,
+		delay: 100,
 		callback: function(){}
 	};
 
