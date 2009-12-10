@@ -18,16 +18,26 @@
 			var $select = $(this), html = '';
 			
 			html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
-			html += '<div class="multiSelectOptions ui-widget-content ui-corner-all">';
-			if(o.selectAll) html += '<label class="selectAll ui-widget-header"><a href="" class="multiselect-checkall">Check All</a> &nbsp;/&nbsp; <a href="" class="multiselect-uncheckall">Uncheck All</a></label>';
+			//html += '<div class="multiSelectOptions ui-widget-content ui-corner-all">';
+			html += '<div class="multiSelectOptions ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">';
+			html += '<ul class="ui-helper-reset">';
+			
+			if(o.selectAll){
+				html += '<li class="ui-multiselect-header">';
+				html += '<label class="ui-widget-header ui-corner-all">';
+				html += '<a href="" class="ui-multiselect-checkall"><span class="ui-icon ui-icon-check">&nbsp;</span>'+o.selectAllText+'</a>'; 
+				html += '<a href="" class="ui-multiselect-uncheckall"><span class="ui-icon ui-icon-close">&nbsp;</span>'+o.deSelectAllText+'</a>';
+				html += '</label>';
+				html += '</li>';
+			};
 			
 			$select.find('option').each(function(){
 				var $this = $(this), value = $this.val(), len = value.length;
 
 				if(len > 0){
-					html += '<label><input type="checkbox" name="' + $select.attr('name') + '" value="' + len + '"';
+					html += '<li><label class="ui-corner-all"><input type="checkbox" name="' + $select.attr('name') + '" value="' + len + '"';
 					if($this.is(':selected')) html += ' checked="checked"';
-					html += ' />' + $this.html() + '</label>';
+					html += ' />' + $this.html() + '</label></li>';
 				};
 			});
 			html += '</div>';
@@ -35,7 +45,6 @@
 			// cache objects
 			$select  = $select.after(html).next('a.multiSelect');
 			$options = $select.next('div.multiSelectOptions');
-			$inputs  = $options.find('input:checkbox');
 			
 			// the select box events
 			$select
@@ -57,21 +66,20 @@
 			.blur(function(){
 				$(this).removeClass('ui-state-focus');
 			})
-			.find("input")
 			.keydown(function(e){
-				var $this = $(this);
-				var $container = $this.parent().next('.multiSelectOptions');
-				var $checkbox;
-
-				if($container.is(':visible')){
+				var $this = $(this), // ref to the select box
+				    $label = $options.find('label.ui-state-hover'), // currently highlighted label
+				    $next;
+				
+				if($options.is(':visible')){
 				
 					switch(e.keyCode){
 						
 						// tab
 						case 9:
-							$this.addClass('ui-state-focus').trigger('click');
+							$this.focus().addClass('ui-state-focus').trigger('click').find('input:checkbox:first').focus();
 							$this.focus().next(':input').focus();
-							return true;
+							//return true;
 							break;
 					
 						// esc, left, right
@@ -81,42 +89,45 @@
 							$this.addClass('ui-state-focus').trigger('click');
 							break;
 					
-						// down
+						// up + down
+						case 38:
 						case 40:
-							if(!$container.find('label').hasClass('ui-state-hover')){
-								$container.find('label:first').addClass('ui-state-hover');
-							} else {								// Move down, cycle to top if on bottom
-								$container.find('label.ui-state-hover').removeClass('ui-state-hover').next('label').addClass('ui-state-hover');
-								if( !$container.find('label').hasClass('ui-state-hover') ) {
-									$container.find('label:first').addClass('ui-state-hover');
-								};							};
-						
+							action = (e.keyCode === 38) ? 'prev' : 'next';
+							$label = !$label.length ? $options.find('label:first').addClass('ui-state-hover') : $label;
+	
+							var $next = $label
+								.removeClass('ui-state-hover')
+								.parent()
+								[action]('li')
+								.find('label')
+								.trigger('mouseover');
+
+							// if up and at the bottom, move to the top
+							if(e.keyCode === 38 && $next.length === 0){
+								$options.find('label:last').trigger('mouseover');
+							};
+
 							// adjust the viewport if necessary
 							adjustViewport($this);
 							e.preventDefault();
 							break;
 						
-						// up
-						case 38:
-							if(!$container.find('label').hasClass('ui-state-hover')){
-								// Default to first item								$container.find('label:first').addClass('ui-state-hover');
-							} else {
-								// Move up, cycle to bottom if on top
-								$container.find('label.ui-state-hover input:checkbox').removeClass('ui-state-hover').prev('label').addClass('ui-state-hover');
-							
-								if(!$container.find('label').hasClass('ui-state-hover')){
-									$container.find('label:last').addClass('ui-state-hover');
-								};
-							};
-							
-							// adjust the viewport if necessary
-							adjustViewport($this);
-							return false;
-							break;
-						
 						// enter, space
 						case 13:
 						case 32:
+							$checkbox = $label.find('input');
+							
+							if( $checkbox.is(':checked') ){
+								$checkbox.removeAttr('checked');
+							} else {
+								$checkbox.attr('checked','checked');
+							}
+							
+							updateSelected();
+							o.onCheck.call($this);
+							e.preventDefault(); // so hitting enter doesn't submit the form 
+							
+							/*
 							$checkbox = $container.find('label.ui-state-hover input:checkbox');
 							
 							if($checkbox.hasClass('selectAll')){
@@ -127,28 +138,29 @@
 									// check all
 									$container.find('input:checkbox').attr('checked','checked').parent().addClass('checked');
 								};
-								updateSelected($container);
-								o.callback.call($this);
-								return false;
+								updateSelected();
+								o.onCheck.call($this);
+								e.preventDefault();
 							};
 						
 							if($checkbox.is(':checked')){
 								// Uncheck
 								$checkbox.removeAttr('checked');
 								$container.find('label').removeClass('ui-state-active').find('input:checked').parent().addClass('ui-state-active');
-								updateSelected($container);
+								updateSelected();
 								
 								// Select all status can't be checked at this point
 								$container.find('label:checkbox.selectAll').attr('checked', 'checked').parent().removeClass('ui-state-active');
-								o.callback.call($this);
+								o.onCheck.call($this);
 							} else {
 								// Check
 								$checkbox.attr('checked', 'checked');
 								$container.find('label').removeClass('ui-state-active').find('label:checked').parent().addClass('ui-state-active');
-								updateSelected($container);
-								o.callback.call($this);
+								updateSelected();
+								o.onCheck.call($this);
 							};
-							return false;
+							e.preventDefault();
+							*/
 							break;
 					};
 				
@@ -172,7 +184,7 @@
 						case 9:
 							// Shift focus to next INPUT element on page
 							$this.focus().next(':input').focus();
-							return true;
+							//return true;
 							break;
 					};
 				};
@@ -180,53 +192,46 @@
 			
 
 			// option events
-			
 			$options
 			.each(function(){
 				var $this = $(this);
 				$this.find('input:checked').parent();
-				updateSelected($this,o);
+				updateSelected();
 			})
-			.find('label:not(label.selectAll)')
-			.addClass('ui-state-default')
+			.find('li:not(.ui-multiselect-header) label')
 			.mouseover(function(){
 				$(this).addClass('ui-state-hover');
 			})
-			.mouseout(function() {
+			.mouseout(function(){
 				$(this).removeClass('ui-state-hover');
 			})
-			.find('input:checkbox:not(input.selectAll)')
-			.click(function(){
-				var $this = $(this), $container = $(this).closest('div.multiSelectOptions'), $label = $this.parent();
+			.find('input:checkbox')
+			/*.click(function(){
+				var $this = $(this), $container = $(this).closest('div.multiSelectOptions');
 				
-				updateSelected($container,o);
+				updateSelected();
 				
-				if(this.checked){
-					$label.addClass('ui-state-active');
-				} else {
-					$label.removeClass('ui-state-active');
-				}
-								$container.prev('a.multiSelect').focus();
+				$container.prev('a.multiSelect').focus();
 				//$container.find('label').find('input:checked').parent();
 				//if(!this.checked) $container.find('input:checkbox.selectAll').attr('checked', 'checked').parent().removeClass('ui-state-active');
-				o.callback.call($this);
-			})
-			.parent()
-			.siblings('label.selectAll')
+				o.onCheck.call($this);
+			})*/
+			.click(check)
+			.find("input")
+			.closest('li')
+			.siblings('li.ui-multiselect-header')
 			.find('a')
-			.click(function(){
-				var $this = $(this),
-					$container = $this.closest('div.multiSelectOptions'),
-					$inputs = $container.find('input:checkbox');
+			.click(function(e){
+				var $inputs = $options.find('input:checkbox');
 				
-				if($this.hasClass("multiselect-checkall")){
-					$inputs.attr('checked', 'checked').parent().addClass('ui-state-active'); 
+				if($(this).hasClass("ui-multiselect-checkall")){
+					$inputs.attr('checked', 'checked');
 				} else {
-					$inputs.removeAttr('checked').parent().removeClass('ui-state-active');
+					$inputs.removeAttr('checked');
 				};
 				
-				updateSelected($container,o);
-				return false;
+				updateSelected();
+				e.preventDefault();
 			});
 			
 			// apply bgiframe if available
@@ -250,17 +255,19 @@
 				$options = $select.next('div.multiSelectOptions');
 				
 				// hide options if open
-				if($select.hasClass('ui-state-active')){
-					hideOptions();
-					return;
-				};
+				//if($select.hasClass('ui-state-active')){
+				
+					hideOptions(true);
+					
+				//	return;
+				//};
 				
 				// show the options div, position it, add classes
 				$select
 				.addClass('ui-state-active')
 				.next('div.multiSelectOptions')
 				.css({ position:'absolute', top: offset.top + $select.outerHeight() + 'px', left: offset.left + 'px' })
-				.show()
+				.slideDown()
 				.find('label')
 				.removeClass('ui-state-hover');
 		
@@ -285,22 +292,39 @@
 						timer = setTimeout(function(){
 							hideOptions(); 
 							$select.unbind("hover");
-						}, o.delay);
+						}, o.hideDelay);
 					}
 				);			};
 			
-			function hideOptions(){
-				$select.removeClass('ui-state-active');
-				$options.hide();
+			function check(e){
+				var $this = $(this), $container = $this.closest('div.multiSelectOptions');
+				
+				updateSelected();
+				
+				$container.prev('a.multiSelect').focus();
+				o.onCheck.call($this);
 			};
 			
-			function updateSelected($container){
-				var s = '',
-				    display = '',
-				    $checked = $container.find('input:checkbox:checked'),
-				    $input = $container.prev('a.multiSelect').find('input'),
-				    count = $checked.not('input.selectAll').length;
-	
+			function hideOptions(hideAll){
+				hideAll = hideAll || false;
+				
+				if(hideAll){
+					$("div.multiSelectOptions").slideUp().prev(".multiSelect").removeClass('ui-state-active');
+				} else {
+			
+					// FIXME: why??
+					$options = $select.next('div.multiSelectOptions');
+					$select.removeClass('ui-state-active');
+					$options.slideUp();
+				};
+			};
+			
+			function updateSelected(){
+				var display = '',
+				    $checked = $options.find('input:checkbox:checked'),
+				    $input = $options.prev('a.multiSelect').find('input'),
+				    count = $checked.length;
+				
 				if(count === 0){
 					$input.val( o.noneSelected );
 				} else {
@@ -318,14 +342,13 @@
 			};
 			
 			function adjustViewport(el){
-				var $container = $(el).parent().next('div.multiSelectOptions'),
-				    i = 0,
+				var i = 0,
 				    selectionTop = 0,
 				    selectionHeight = 0,
-				    divScroll,
+				    //divScroll,
 				    divHeight;
 				
-				$container
+				$options
 				.find('label')
 				.each(function(){
 					var $this = $(this);
@@ -339,11 +362,11 @@
 					i += $this.outerHeight();
 				});
 	
-				divScroll = $container.scrollTop();
-				divHeight = $container.height();
-	
+				//divScroll = $container.scrollTop();
+				divHeight = $options.height();
+				
 				// adjust the dropdown scroll position
-				$container.scrollTop(selectionTop - ((divHeight / 2) - (selectionHeight / 2)));
+				$options.scrollTop( selectionTop-((divHeight/2)-(selectionHeight/2)) );
 			};
 			
 			
@@ -353,12 +376,13 @@
 	// default options
 	$.fn.multiSelect.options = {
 		selectAll: true,
-		selectAllText: 'Select all',
+		selectAllText: 'Check all',
+		deSelectAllText: 'Uncheck all',
 		noneSelected: 'Select options',
 		oneOrMoreSelected: '% selected',
 		height: 200,
-		delay: 100,
-		callback: function(){}
+		hideDelay: 500,
+		onCheck: function(){}
 	};
 
 })(jQuery);

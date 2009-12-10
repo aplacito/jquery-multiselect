@@ -1,5 +1,5 @@
 .multiSelect {
-	width:200px;
+	width:225px;
 	font-weight:normal !important;
 	display:inline-block;
 	cursor:default;
@@ -12,15 +12,20 @@
 .multiSelect img { float:right; margin-top:-18px; }
 
 .multiSelectOptions {
-	width:200px;
+	width:225px;
 	max-height:175px;
 	overflow:auto;
 	display:none;
 }
 
-.multiSelectOptions label { display:block; padding:3px }
-.multiSelectOptions label input { position:relative; top:1px }
 
-.multiSelectOptions label.selectAll { text-align:center }
+.multiSelectOptions label { display:block; border:1px solid #fff; padding:3px }
+.multiSelectOptions label input { position:relative; top:1px }
 .multiSelectOptions label.ui-state-default { border-top:0; border-bottom:0 }
 
+.multiSelectOptions li { clear:both; font-size:0.9em; padding:0 3px }
+
+.ui-multiselect-header { padding:0 !important }
+.ui-multiselect-header label { height:15px; padding:3px 0; }
+.ui-multiselect-header label a { float:left; padding:0 15px; font-size:0.85em }
+.ui-multiselect-header label a span { float:left; position:relative; top:-1px }
