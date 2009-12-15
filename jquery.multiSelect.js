@@ -22,7 +22,7 @@
 		}
 	});
 		$.MultiSelect = function(select, o){
-		var $select = $(select), html = '', checked = 0;
+		var $select = $(select), $options, html = '', checked = 0;
 		
 		html += '<a class="multiSelect ui-state-default ui-corner-all">';
 		html += '<input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
@@ -277,9 +277,6 @@
 		function showOptions(){
 			var offset = $select.position(), timer, listHeight = 0;
 			
-			// FIXME: why??
-			$options = $select.next('div.multiSelectOptions');
-			
 			// hide options if open
 			//if($select.hasClass('ui-state-active')){
 			
@@ -301,8 +298,6 @@
 			
 			/* IE6 does not support max-height */
 			if($.browser.msie && typeof document.body.style.maxHeight === "undefined"){
-				//var $options = $select.next('div.multiSelectOptions');
-				
 				$options.children().each(function(){
 					listHeight += this.offsetHeight;
 				});
@@ -350,9 +345,6 @@
 			if(hideAll){
 				$("div.multiSelectOptions").slideUp().prev(".multiSelect").removeClass('ui-state-active');
 			} else {
-		
-				// FIXME: why??
-				$options = $select.next('div.multiSelectOptions');
 				$select.removeClass('ui-state-active');
 				$options.slideUp();
 			};
