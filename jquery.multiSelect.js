@@ -100,19 +100,16 @@
 		.each(function(){
 			updateSelected();
 		})
+		.bind("mouseleave", function(){
+			setTimeout(function(){
+				hideOptions(); 
+				$select.unbind("hover");
+			}, o.hideDelay);
+		})
 		.find("label")
 		.bind('mouseenter mouseleave', function(e){
 			var $target = $(e.target);
-			
-			// if the target is the checkbox inside the label, reset target to the label
-			//if($target.is(':checkbox')){
-			//	$target = $target.parent();
-			//}
-			
-			// only apply target to labels.  fixes a bug if your mouse is over the scroll bar
-			//if($target.is('label')){
-				$target.focus()[ (e.type === 'mouseenter') ? 'addClass' : 'removeClass' ]('ui-state-hover');
-			//}
+			$target.focus()[ (e.type === 'mouseenter') ? 'addClass' : 'removeClass' ]('ui-state-hover');
 		})
 		.bind('click', function(e){
 			var $target = $(e.target),
@@ -256,14 +253,7 @@
 				// TODO - made this height configurable
 				if(listHeight > 175) $options.css({ height: '175px' });
 			};
-			
-			// close on hover out
-			$options.bind('mouseout', function(){
-				setTimeout(function(){
-					hideOptions(); 
-					$select.unbind("hover");
-				}, o.hideDelay);
-			});		};
+		};
 
 		function hideOptions(others){
 			others = others || false;
