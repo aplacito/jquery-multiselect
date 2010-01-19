@@ -22,10 +22,10 @@
 		}
 	});
 		$.MultiSelect = function(select,o){
-		var $select = $(select), $options, html = '';
+		var $select = $(select), $options, html = '', optgroups = [];
 		
 		html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
-		html += '<div class="multiSelectOptions ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">';
+		html += '<div class="multiSelectOptions multiSelectOptionsShadow ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">';
 		html += '<ul class="ui-helper-reset">';
 		
 		// add select all link?
@@ -38,16 +38,26 @@
 		};
 		
 		// build options
-		$select.find('option').each(function(){
-			var $this = $(this), value = $this.val(), len = value.length;
-
+		$select.find('option').each(function(i){
+			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent();
+			
+			if($parent.is("optgroup")){
+				var label = $parent.attr("label");
+				
+				if($.inArray(label, optgroups) === -1){
+					html += '<li class="multiSelect-optgroup-label"><span>' + label + '</span></li>';
+					optgroups.push(label);
+				}
+			}
+			
 			if(len > 0){
-				html += '<li><label class="ui-corner-all"><input type="checkbox" name="' + $select.attr('name') + '" value="' + len + '"';
+				html += $this.parent().is("optgroup") ? '<li class="multiSelect-optgroup">' : '<li>';
+				html += '<label class="ui-corner-all"><input type="checkbox" name="' + $select.attr('name') + '" value="' + len + '"';
 				if($this.is(':selected')) html += ' checked="checked"';
 				html += ' />' + $this.html() + '</label></li>';
 			};
 		});
-		html += '</div>';
+		html += '</ul></div>';
 		
 		// cache queries
 		$select  = $select.after(html).next('a.multiSelect');
@@ -55,26 +65,23 @@
 		
 		// the select box events
 		$select
-		.bind('mouseover mouseout', function(e){
-			$(this)
-			[(e.type === 'mouseover') ? 'addClass' : 'removeClass']('ui-state-hover')
-			[(e.type === 'mouseover') ? 'focus' : 'blur']();
+		.bind('mouseover mouseout focus blur', function(e){
+			$(this)[(e.type === 'mouseover') ? 'addClass' : 'removeClass']('ui-state-hover');
 			toggleArrow();
 			e.preventDefault();
 		})
 		.bind('click', function(e){
 			if($options.is(':hidden')){
 				$(this).addClass('ui-state-active');
-				showOptions();
+				open();
 			} else {
 				$(this).removeClass('ui-state-active');
-				hideOptions();
+				close();
 			};
 			
 			e.preventDefault();
 		})
 		.bind('keydown', function(e){
-
 			switch(e.keyCode){
 				case 40: // down
 				case 32: // space
@@ -83,26 +90,34 @@
 						// go to the first option
 						$options.find('li:first label').trigger('mouseenter');
 						
-						showOptions();
+						open();
 					} else { 
-						hideOptions();
+						close();
 					}
 					e.preventDefault();
 					break;
 					
 				case 27: // esc
-					hideOptions();
+					close();
 					break;
 			};
-			
 		})
-		.next('div.multiSelectOptions')
+		.find("input").bind('focus blur', function(e){
+			$(this)
+			.parent()
+			[(e.type === 'focus') ? 'addClass' : 'removeClass']('ui-state-focus')
+			[(e.type === 'focus') ? 'focus' : 'blur']();
+			toggleArrow();
+		});
+		
+		// options
+		$options
 		.each(function(){
 			updateSelected();
 		})
 		.bind("mouseleave", function(){
 			setTimeout(function(){
-				hideOptions(); 
+				close(); 
 				$select.unbind("hover");
 			}, o.hideDelay);
 		})
@@ -151,12 +166,12 @@
 				switch(e.keyCode){
 					
 					case 9: // tab
-						hideOptions();
+						close();
 						$select.next(":input").focus();
 						break;
 				
 					case 27: // esc
-						hideOptions();
+						close();
 						break;
 				
 					case 38: // up
@@ -226,19 +241,26 @@
 		$select.prev().remove();
 		
 		function toggleArrow(){
-			$select.find("img").attr('src', ($select.hasClass('ui-state-hover') ? 'arrow_hover.gif' : 'arrow.gif') );
+			$select.find("img").attr('src', ($select.hasClass('ui-state-hover') || $select.hasClass('ui-state-focus') ? 'arrow_hover.gif' : 'arrow.gif') );
 		};
 		
-		function showOptions(){
+		function open(){
 			var offset = $select.position(), timer, listHeight = 0;
 			
 			// hide all other options
-			hideOptions(true);
+			close(true);
 			
+		
 			// show the options div + position it
 			$options
-				.css({ position:'absolute', top:(offset.top + $select.outerHeight())+'px', left: offset.left+'px' })
-				.slideDown(o.slideSpeed);
+				//.css({ position:'absolute', top:(offset.top + $select.outerHeight())+'px', left: offset.left+'px' })
+				.css({
+					position: 'absolute',
+					top: (offset.top - $options.outerHeight()/2) + 'px',
+					left: offset.left + 'px'
+				})
+				.show();
+				//.slideDown(o.slideSpeed);
 				//.find('label')
 				//.removeClass('ui-state-hover');
 				
@@ -255,7 +277,7 @@
 			};
 		};
 
-		function hideOptions(others){
+		function close(others){
 			others = others || false;
 			
 			// hides all other options but the one clicked
@@ -263,14 +285,14 @@
 			
 				$('div.multiSelectOptions')
 				.filter(':visible')
-				.slideUp(o.slideSpeed)
+				.fadeOut(o.slideSpeed)
 				.prev("a.multiSelect")
-				.removeClass('ui-state-active');
+				.removeClass('ui-state-active ui-state-focus');
 			
 			// hides the clicked options
 			} else {
-				$select.removeClass('ui-state-active');
-				$options.slideUp(o.slideSpeed);
+				$select.removeClass('ui-state-active ui-state-focus');
+				$options.fadeOut(o.slideSpeed);
 			};
 		};
 		

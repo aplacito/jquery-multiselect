@@ -7,13 +7,23 @@
 	padding:0;
 }
 
-
 .multiSelect input { float:left; width:90%; padding:3px 6px; border:none; cursor:default; background:transparent }
 .multiSelect img { float:right; margin-top:-18px; }
-.multiSelectOptions { width:225px; max-height:175px; overflow:auto; display:none; }
+.multiSelectOptions { width:225px; max-height:175px; overflow:auto; display:none }
+
+/* shadow effect */
+.multiSelectOptions.multiSelectOptionsShadow {
+	box-shadow:0 0 10px #777; 
+	-moz-box-shadow:0 0 10px #777; 
+	-webkit-box-shadow:0 0 10px #777;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Glow(color=#666666,strength=3) progid:DXImageTransform.Microsoft.Shadow(color=#777777,direction=135,strength=3)"; 
+	filter: progid:DXImageTransform.Microsoft.Glow(color=#666666,strength=3) progid:DXImageTransform.Microsoft.Shadow(color=#777777,direction=135,strength=3);
+}
 
 /* border color should be transparent but IE6 doesn't support that value.  edit border the color to fit your jquery-ui theme. */
 .multiSelectOptions label { display:block; border:1px solid transparent; padding:3px }
 .multiSelectOptions label input { position:relative; top:1px }
 .multiSelectOptions li { clear:both; font-size:0.9em; padding:0 3px }
-
+.multiSelectOptions li.multiSelect-optgroup-label { text-align:center; font-weight:bold; border-bottom:1px solid }
+.multiSelectOptions li.multiSelect-optgroup-label span { display:block; padding:3px; margin:1px 0 }
+.multiSelectOptions li.multiSelect-optgroup label {}
