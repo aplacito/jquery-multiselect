@@ -22,18 +22,23 @@ $(function(){
 	 
 	 
 	// Default options
-	$("#example1").multiSelect();
+	$("#example1, #example2, #example4").multiSelect();
+
+	// position
+	$("#example5").multiSelect({ position:'below', applyShadow:false });
 	
-	/*
 	// With callback
-	$("#example3").multiSelect({ 
+	$("#example3").multiSelect({
+		onOpen: function(){
+			console.log(this, 'opened');
+		},
+		onClose: function(){
+			console.log(this, 'closed');
+		},
 		onCheck: function(){
-			// 'this' is the input checked
 			
-			$callback = $("#callback").show();
-			setTimeout(function(){
-				$callback.fadeOut();
-			}, 400);
+			// 'this' is the input checked
+			alert('checkbox with value ' + this.value + ' clicked!');
 		}
 	});
 	
@@ -50,7 +55,7 @@ $(function(){
 		alert(results);
 		return false;
 	});
-	*/
+	
 });
 </script>
 
@@ -96,9 +101,8 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 3: onCheck callback</h2>
+	<h2>Example 3: All callbacks</h2>
 	<p>
-		<div id="callback" style="display:none;color:green">Callback fired</div>
 		<select id="example3" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
@@ -125,6 +129,20 @@ $(function(){
 			<option value="option6">Option 6</option>
 			<option value="option7">Option 7</option>
 		</optgroup>
+		</select>
+	</p>
+	
+
+	<h2>Example 5: Change the positioning to &quot;below&quot;, no CSS shadow class</h2>
+	<p>
+		<select id="example5" multiple="multiple" size="5">
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		<option value="option6">Option 6</option>
+		<option value="option7">Option 7</option>
 		</select>
 	</p>
 	
