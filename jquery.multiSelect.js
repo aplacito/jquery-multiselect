@@ -1,7 +1,8 @@
 /*
  * jQuery multiSelect 0.1
+ * by Eric Hynds, 2010
  *
- * Original code and logic by Cory S.N. LaViska, A Beautiful Site (http://abeautifulsite.net/) 2009 * Rewritten 2009 by Eric Hynds
+ * Based off of Cory S.N. LaViska's implementation, A Beautiful Site (http://abeautifulsite.net/) 2009
  *
  * Licensing & Terms of Use
  * 
@@ -22,7 +23,7 @@
 		}
 	});
 		$.MultiSelect = function(select,o){
-		var $select = $original = $(select), $options, html = '', optgroups = [];
+		var $select = $original = $(select), $options, $labels, html = '', optgroups = [];
 		
 		html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
 		html += '<div class="multiSelectOptions' + (o.applyShadow ? ' multiSelectOptionsShadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">';
@@ -62,6 +63,7 @@
 		// cache queries
 		$select  = $select.after(html).next('a.multiSelect');
 		$options = $select.next('div.multiSelectOptions');
+		$labels  = $options.find("label");
 		
 		// the select box events
 		$select
@@ -129,6 +131,7 @@
 				var offset = $select.position(), timer, listHeight = 0, top;
 			
 				// hide all other options
+				// TODO fix this
 				$options.trigger("close", [true]);
 				
 				// determine positioning
@@ -136,18 +139,19 @@
 					top = (offset.top - $options.outerHeight()/2);
 					
 				} else if(o.position === 'above'){ // above
-					console.log( $options.outerHeight() - offset.top );
 					top = (offset.top-$options.outerHeight());
 					
 				} else { // below, default
 					top = (offset.top + $select.outerHeight());
 				}
+				
+				// select the first option
+				$labels.filter("label:first").trigger("mouseenter");
 			
 				// show the options div + position it
-				$options.css({ position:'absolute', top:top+'px', left:offset.left + 'px' }).show();
+				$options.css({ position:'absolute', top:top+'px', left:offset.left + 'px' }).show().scrollTop(0);
 				
 				o.onOpen.call($options[0]);
-			
 			},
 			'traverse': function(e, start, keycode){
 				var $start = $(start), $next;
@@ -174,8 +178,12 @@
 			}
 		})
 		.find("label")
-		.bind('mouseenter mouseleave', function(e){
-			$(e.target)[ (e.type === 'mouseenter') ? 'addClass' : 'removeClass' ]('ui-state-hover').find("input").focus();
+		//.bind('mouseenter mouseleave', function(e){
+		//	$(e.target)[ (e.type === 'mouseenter') ? 'addClass' : 'removeClass' ]('ui-state-hover').find("input").focus();
+		//})
+		.bind('mouseenter', function(e){
+			$labels.removeClass('ui-state-hover');
+			$(this).addClass('ui-state-hover').find("input").focus();
 		})
 		.bind('click', function(e){
 			var $target = $checkbox = $(e.target);
