@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Eric Hynds Blog - jQuery, Javascript, ColdFusion, Ruby on Rails</title>
+<title>jQuery MultiSelect Plugin by Eric Hynds</title>
 <link href="jquery.multiSelect.css" rel="stylesheet" type="text/css" />
 <link type="text/css" rel="stylesheet" href="http://jqueryui.com/themes/base/ui.all.css" />
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript"></script>
@@ -26,7 +26,7 @@ $(function(){
 	$("select.multiselect").multiSelect();
 
 	// position
-	$("#example5").multiSelect({ position:'middle', shadow:true });
+	$("#example5").multiSelect({ position:'middle', shadow:true, showHeader:false });
 	
 	// callbacks
 	var $callback = $("#callback");
@@ -132,7 +132,7 @@ $(function(){
 	</p>
 	
 
-	<h2>Example 5: Change the positioning to &quot;middle&quot; with a drop shadow</h2>
+	<h2>Example 5: Change the positioning to &quot;middle&quot;, no header with a drop shadow</h2>
 	<p>
 		<select name="example5" id="example5" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
@@ -172,7 +172,8 @@ $(function(){
 		<option value="option7">Option 7</option>
 		</select>
 	</p>
-
+	<select></select>
+	
 	<br />
 	<input type="submit" name="submit" value="Click to Serialize" />
 	</form>

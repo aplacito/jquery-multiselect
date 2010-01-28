@@ -1,5 +1,5 @@
 .ui-multiselect { width:225px; font-weight:normal !important; display:-moz-inline-block; display:inline-block; cursor:default; text-decoration:none !important; padding:0 }
-.ui-multiselect input { width:225px; float:left; padding:3px 6px; border:none; cursor:default; background:transparent }
+.ui-multiselect input { width:225px; float:left; padding:3px 0 3px 6px; margin:0; border:none; cursor:default; background:transparent }
 .ui-multiselect span { float:right; margin-top:-18px; }
 
 .ui-multiselect-header { margin-bottom:3px; padding:3px 0 3px 4px }

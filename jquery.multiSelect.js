@@ -154,7 +154,7 @@
 				
 				// determine positioning
 				if(o.position === 'middle'){
-					top = (offset.top-$options.outerHeight()/2);
+					top = ( offset.top+($select.height()/2)-($options.outerHeight()/2) );
 					
 				} else if(o.position === 'top'){
 					top = (offset.top-$options.outerHeight());
@@ -275,7 +275,7 @@
 						// show dropdown
 						$this.removeClass('ui-state-focus').trigger('click');
 						$options.find('label:first').addClass('ui-state-hover');
-						e.preventDefault();
+						e.preventDe4fault();
 						break;
 					
 					//  Tab key
@@ -311,10 +311,8 @@
 						var text = $(this).parent().text();
 						value = (value.length) ? (value += ', ' + text) : text;
 					});
-					
 				} else {
 					value = o.selectedText.replace('%', numChecked);
-					
 				};
 				
 				$input.val( value ).attr("title", value);
