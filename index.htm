@@ -1,8 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="google-site-verification" content="9p6zGbGZJ2bKc1cxKyySv-5TAZkSxqAiE-Ygu-ZaixE" />
 <title>Eric Hynds Blog - jQuery, Javascript, ColdFusion, Ruby on Rails</title>
 <link href="jquery.multiSelect.css" rel="stylesheet" type="text/css" />
 <link type="text/css" rel="stylesheet" href="http://jqueryui.com/themes/base/ui.all.css" />
@@ -14,6 +13,8 @@
 <style type="text/css">
 body { font: 12px Arial, sans-serif; }
 h2 { font-size:14px; padding:0; margin:10px 0 }
+p { margin:0; padding:0 }
+#callback { color:green }
 </style>
 
 <script type="text/javascript">
@@ -25,17 +26,16 @@ $(function(){
 	$("select.multiselect").multiSelect();
 
 	// position
-	$("#example5").multiSelect({ position:'below', applyShadow:false });
+	$("#example5").multiSelect({ position:'middle', shadow:true });
 	
 	// callbacks
+	var $callback = $("#callback");
 	$("#example3").multiSelect({
-		onOpen: function(){
-			console.log(this, 'opened');
-		},
 		onCheck: function(){
-			
-			// 'this' is the input checked
-			alert('checkbox with value ' + this.value + ' clicked!');
+			$callback.html("Checkbox with value " + this.value + ' clicked!');
+		},
+		onOpen: function(){
+			$callback.html("Select opened!");
 		}
 	});
 	
@@ -46,6 +46,12 @@ $(function(){
 	$("#example7").multiSelect({ 
 		checkAllText: 'Select All',
 		unCheckAllText: 'Deselect All'
+	});
+	
+	$("#examples").submit(function(e){
+		var data = $(this).serialize();
+		alert( data.length ? data : 'Nothing to serialize; check a box or two' );
+		e.preventDefault();
 	});
 	
 });
@@ -59,11 +65,10 @@ $(function(){
 	<div id="themeswitcher"></div>
 	<p>&nbsp;</p>
 	
-	<form action="" method="post">
-
+	<form action="" method="post" id="examples">
 	<h2>Example 1: Basic</h2>
 	<p>
-		<select class="multiselect" multiple="multiple" size="5">
+		<select name="example1" class="multiselect" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -82,7 +87,7 @@ $(function(){
 
 	<h2>Example 2: Pre-selected options</h2>
 	<p>
-		<select class="multiselect" multiple="multiple" size="5">
+		<select name="example2" class="multiselect" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1" selected="selected">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -96,7 +101,8 @@ $(function(){
 
 	<h2>Example 3: onOpen, onCheck callbacks</h2>
 	<p>
-		<select id="example3" multiple="multiple" size="5">
+		<div id="callback">Callback target</div>
+		<select name="example3" id="example3" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -110,7 +116,7 @@ $(function(){
 
 	<h2>Example 4: Optgroup support</h2>
 	<p>
-		<select class="multiselect" multiple="multiple" size="5">
+		<select name="example4" class="multiselect" multiple="multiple" size="5">
 		<optgroup label="Group One">
 			<option value="option1">Option 1</option>
 			<option value="option2">Option 2</option>
@@ -126,9 +132,9 @@ $(function(){
 	</p>
 	
 
-	<h2>Example 5: Change the positioning to &quot;below&quot;, no CSS shadow class</h2>
+	<h2>Example 5: Change the positioning to &quot;middle&quot; with a drop shadow</h2>
 	<p>
-		<select id="example5" multiple="multiple" size="5">
+		<select name="example5" id="example5" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
 		<option value="option3">Option 3</option>
@@ -141,7 +147,7 @@ $(function(){
 	
 	<h2>Example 6: Options displayed in comma-separated list</h2>
 	<p>
-		<select id="example6" multiple="multiple" size="5">
+		<select name="example6" id="example6" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -155,7 +161,7 @@ $(function(){
 
 	<h2>Example 7: &ldquo;Check All&rdquo; text changed</h2>
 	<p>
-	<select id="example7" multiple="multiple" size="5">
+		<select name="example7" id="example7" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -164,9 +170,11 @@ $(function(){
 		<option value="option5">Option 5</option>
 		<option value="option6">Option 6</option>
 		<option value="option7">Option 7</option>
-	</select>
+		</select>
 	</p>
 
+	<br />
+	<input type="submit" name="submit" value="Click to Serialize" />
 	</form>
 	
 </body>

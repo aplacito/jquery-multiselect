@@ -1,22 +1,25 @@
-.ui-multiselect { width:225px; font-weight:normal !important; display: -moz-inline-block; display:inline-block; cursor:default; text-decoration:none !important; padding:0 }
+.ui-multiselect { width:225px; font-weight:normal !important; display:-moz-inline-block; display:inline-block; cursor:default; text-decoration:none !important; padding:0 }
 .ui-multiselect input { width:225px; float:left; padding:3px 6px; border:none; cursor:default; background:transparent }
 .ui-multiselect span { float:right; margin-top:-18px; }
 
-.ui-multiselect-header { margin-bottom:3px }
-.ui-multiselect-header ul { padding:3px 0 3px 3px; font-size:11px }
-.ui-multiselect-header ul li { float:left; padding:0 15px 0 0 }
+.ui-multiselect-header { margin-bottom:3px; padding:3px 0 3px 4px }
+.ui-multiselect-header ul { font-size:0.9em }
+.ui-multiselect-header ul li { float:left; padding:0 10px 0 0 }
 .ui-multiselect-header a { text-decoration:none  }
 .ui-multiselect-header .ui-icon { float:left }
 .ui-multiselect-header li.ui-multiselect-close { float:right; text-align:right; padding-right:0 }
 
-.ui-multiselect-options {  display:none; padding:3px }
-.multiselect-checkboxes { max-height:175px; overflow:auto }
-.multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent /* IE6: change transparent to a real color */; padding:3px }
+.ui-multiselect-options { display:none; padding:3px }
+.multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
+.multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px }
 .multiselect-checkboxes label input { position:relative; top:1px }
 .multiselect-checkboxes li { clear:both; font-size:0.9em; padding-right:3px }
 .multiselect-checkboxes li.multiselect-optgroup-label { text-align:center; font-weight:bold; border-bottom:1px solid }
 .multiselect-checkboxes li.multiselect-optgroup-label span { display:block; padding:3px; margin:1px 0 }
 .multiselect-checkboxes li.multiselect-optgroup label {}
+
+/* remove the border in IE6, because IE6 does not support transparency */
+* html .multiselect-checkboxes label { border:none }
 
 /* shadow effect */
 .ui-multiselect-shadow {
