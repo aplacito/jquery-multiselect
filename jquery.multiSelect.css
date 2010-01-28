@@ -1,29 +1,28 @@
-.multiSelect {
-	width:225px;
-	font-weight:normal !important;
-	display:inline-block;
-	cursor:default;
-	text-decoration:none !important;
-	padding:0;
-}
+.ui-multiselect { width:225px; font-weight:normal !important; display: -moz-inline-block; display:inline-block; cursor:default; text-decoration:none !important; padding:0 }
+.ui-multiselect input { width:225px; float:left; padding:3px 6px; border:none; cursor:default; background:transparent }
+.ui-multiselect span { float:right; margin-top:-18px; }
 
-.multiSelect input { float:left; width:90%; padding:3px 6px; border:none; cursor:default; background:transparent }
-.multiSelect img { float:right; margin-top:-18px; }
-.multiSelectOptions { width:225px; max-height:175px; overflow:auto; display:none }
+.ui-multiselect-header { margin-bottom:3px }
+.ui-multiselect-header ul { padding:3px 0 3px 3px; font-size:11px }
+.ui-multiselect-header ul li { float:left; padding:0 15px 0 0 }
+.ui-multiselect-header a { text-decoration:none  }
+.ui-multiselect-header .ui-icon { float:left }
+.ui-multiselect-header li.ui-multiselect-close { float:right; text-align:right; padding-right:0 }
+
+.ui-multiselect-options {  display:none; padding:3px }
+.multiselect-checkboxes { max-height:175px; overflow:auto }
+.multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent /* IE6: change transparent to a real color */; padding:3px }
+.multiselect-checkboxes label input { position:relative; top:1px }
+.multiselect-checkboxes li { clear:both; font-size:0.9em; padding-right:3px }
+.multiselect-checkboxes li.multiselect-optgroup-label { text-align:center; font-weight:bold; border-bottom:1px solid }
+.multiselect-checkboxes li.multiselect-optgroup-label span { display:block; padding:3px; margin:1px 0 }
+.multiselect-checkboxes li.multiselect-optgroup label {}
 
 /* shadow effect */
-.multiSelectOptions.multiSelectOptionsShadow {
+.ui-multiselect-shadow {
 	box-shadow:0 0 10px #777; 
 	-moz-box-shadow:0 0 10px #777; 
 	-webkit-box-shadow:0 0 10px #777;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Glow(color=#666666,strength=3) progid:DXImageTransform.Microsoft.Shadow(color=#777777,direction=135,strength=3)"; 
 	filter: progid:DXImageTransform.Microsoft.Glow(color=#666666,strength=3) progid:DXImageTransform.Microsoft.Shadow(color=#777777,direction=135,strength=3);
 }
-
-/* border color should be transparent but IE6 doesn't support that value.  edit border the color to fit your jquery-ui theme. */
-.multiSelectOptions label { cursor:default; display:block; border:1px solid transparent; padding:3px }
-.multiSelectOptions label input { position:relative; top:1px }
-.multiSelectOptions li { clear:both; font-size:0.9em; padding:0 3px }
-.multiSelectOptions li.multiSelect-optgroup-label { text-align:center; font-weight:bold; border-bottom:1px solid }
-.multiSelectOptions li.multiSelect-optgroup-label span { display:block; padding:3px; margin:1px 0 }
-.multiSelectOptions li.multiSelect-optgroup label {}

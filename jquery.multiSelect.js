@@ -15,30 +15,32 @@
 (function($){
 	$.fn.extend({
 		multiSelect: function(opts){
-			opts = $.extend({}, $.MultiSelect.defaults, opts);
+			opts = $.extend({}, MultiSelect.defaults, opts);
 
 			return this.each(function(){
-				new $.MultiSelect(this, opts);
+				new MultiSelect(this, opts);
 			});
 		}
 	});
-		$.MultiSelect = function(select,o){
+		var MultiSelect = function(select,o){
 		var $select = $original = $(select), $options, $labels, html = '', optgroups = [];
 		
-		html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
-		html += '<div class="multiSelectOptions' + (o.applyShadow ? ' multiSelectOptionsShadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">';
-		html += '<ul class="ui-helper-reset">';
-		
-		// add select all link?
-		if(o.selectAll){
-			html += '<li class="ui-multiselect-all">';
-			html += '<label class="ui-corner-all">';
-			html += '<input type="checkbox" class="ui-multiselect-all" />' + o.selectAllText;
-			html += '</label>';
-			html += '</li>';
-		};
+		//html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
+		html += '<a class="ui-multiselect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>';
+		html += '<div class="ui-multiselect-options' + (o.applyShadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">';
+	
+		if(o.showHeader){
+			html += '<div class="ui-widget-header ui-helper-clearfix ui-corner-all ui-multiselect-header">';
+			html += '<ul class="ui-helper-reset">';
+			html += '<li><a class="ui-multiselect-all" href=""><span class="ui-icon ui-icon-check"></span>' + o.checkAllText + '</a></li>';
+			html += '<li><a class="ui-multiselect-none" href=""><span class="ui-icon ui-icon-closethick"></span>' + o.unCheckAllText + '</a></li>';
+			html += '<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close ui-icon ui-icon-circle-close"></a></li>';
+			html += '</ul>';
+			html += '</div>';
+		}
 		
 		// build options
+		html += '<ul class="multiselect-checkboxes ui-helper-reset">';
 		$select.find('option').each(function(i){
 			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent();
 			
@@ -46,7 +48,7 @@
 				var label = $parent.attr("label");
 				
 				if($.inArray(label, optgroups) === -1){
-					html += '<li class="multiSelect-optgroup-label"><span>' + label + '</span></li>';
+					html += '<li class="multiselect-optgroup-label"><span>' + label + '</span></li>';
 					optgroups.push(label);
 				}
 			}
@@ -61,15 +63,15 @@
 		html += '</ul></div>';
 		
 		// cache queries
-		$select  = $select.after(html).next('a.multiSelect');
-		$options = $select.next('div.multiSelectOptions');
+		$select  = $select.after(html).next('a.ui-multiselect');
+		$options = $select.next('div.ui-multiselect-options');
+		$header  = $options.find('div.ui-multiselect-header');
 		$labels  = $options.find("label");
 		
 		// the select box events
 		$select
 		.bind('mouseover mouseout', function(e){
 			$(this)[(e.type === 'mouseover') ? 'addClass' : 'removeClass']('ui-state-hover');
-			toggleArrow();
 		})
 		.bind('focus blur', function(e){
 			$(this)[(e.type === 'focus') ? 'addClass' : 'removeClass']('ui-state-focus');
@@ -103,27 +105,44 @@
 		});
 		
 		
-		// create custom option events
+		// header links
+		if(o.showHeader){
+			$header.find("a").click(function(e){
+				var $target = $(e.target);
+			
+				// close link
+				if($target.hasClass("ui-multiselect-close")){
+					$options.trigger('close');
+			
+				// check all / uncheck all
+				} else {
+					$options.trigger('toggleChecked', [($target.hasClass("ui-multiselect-all") ? true : false)]);
+				}
+			
+				e.preventDefault();
+			});
+		}
+		
+		// bind custom events to the options div
 		$options.bind({
 			'close': function(e, others){
+			
 				others = others || false;
 			
 				// hides all other options but the one clicked
 				if(others === true){
-					$('div.multiSelectOptions')
+					
+					$('div.ui-multiselect-options')
 					.filter(':visible')
 					.fadeOut(o.closeSpeed)
-					.prev("a.multiSelect")
+					.prev("a.ui-multiselect")
 					.removeClass('ui-state-active')
 					.trigger('mouseout');
-					
-					// TODO: implement onClose for all options 
 					
 				// hides the clicked options
 				} else {
 					$select.removeClass('ui-state-active').trigger('mouseout');
 					$options.fadeOut(o.closeSpeed);
-					o.onClose.call($options[0]);
 				};
 				
 			},
@@ -131,7 +150,6 @@
 				var offset = $select.position(), timer, listHeight = 0, top;
 			
 				// hide all other options
-				// TODO fix this
 				$options.trigger("close", [true]);
 				
 				// determine positioning
@@ -147,9 +165,20 @@
 				
 				// select the first option
 				$labels.filter("label:first").trigger("mouseenter");
-			
+				
 				// show the options div + position it
-				$options.css({ position:'absolute', top:top+'px', left:offset.left + 'px' }).show().scrollTop(0);
+				$options
+				.css({ 
+					position:'absolute',
+					top:top+'px',
+					left:offset.left + 'px',
+					width:$select.outerWidth()-8 + 'px' // TODO get actual padding
+					//width:$select.width()-($options.outerWidth()-$options.width())+'px'
+				})
+				.show()
+				.scrollTop(0);
+				
+				// TODO implement maxHeight option; IE6
 				
 				o.onOpen.call($options[0]);
 			},
@@ -172,55 +201,49 @@
 					};
 				};
 
-				// adjust the viewport if necessary
-				// adjustViewport();
 				e.preventDefault();
+			},
+			'toggleChecked': function(e, flag){
+				if(flag){
+					$labels.find("input").attr("checked","checked"); 
+				} else {
+					$labels.find("input").removeAttr("checked");
+				}
+				
+				updateSelected();
 			}
-		})
-		.find("label")
-		//.bind('mouseenter mouseleave', function(e){
-		//	$(e.target)[ (e.type === 'mouseenter') ? 'addClass' : 'removeClass' ]('ui-state-hover').find("input").focus();
-		//})
+		});
+		
+		
+		// labels
+		$labels
 		.bind('mouseenter', function(e){
 			$labels.removeClass('ui-state-hover');
 			$(this).addClass('ui-state-hover').find("input").focus();
 		})
-		.bind('click', function(e){
+		.bind('click', function(e, all){
 			var $target = $checkbox = $(e.target);
-			
+			all = (all) ? all || false : undefined;
+
 			// only perform logic on the checkbox
 			if( $target.is("label") ){
 				return;
 			}
 			
-			var $inputs = $options.find('input').not('input.ui-multiselect-all');
-			var $checkall, numInputs, numChecked;
-
-			// select all?
-			if($checkbox.hasClass('ui-multiselect-all')){
-			
-				if($checkbox.is(":checked")){
-					$inputs.attr('checked', 'checked');
-				} else {
-					$inputs.removeAttr('checked');
-				};
-				
-			// individual box
-			} else {
-			
-				$checkall = $options.find('input.ui-multiselect-all');
-				numInputs = $inputs.length;
+			var $inputs = $labels.find('input'),
+				$checkall = $options.find('input.ui-multiselect-all'),
+				numInputs = $inputs.length,
 				numChecked = $inputs.filter('input:checked').length;
 
-				if(numChecked < numInputs){
-					$checkall.removeAttr('checked');
-				} else if(numChecked === numInputs){
-					$checkall.attr('checked','checked');
-				};
-		
-				//$container.prev('a.multiSelect').focus();
-				o.onCheck.call( $checkbox[0] );
+			if(numChecked < numInputs){
+				$checkall.removeAttr('checked');
+			} else if(numChecked === numInputs){
+				$checkall.attr('checked','checked');
 			};
+	
+			//$container.prev('a.multiSelect').focus();
+			o.onCheck.call( $checkbox[0] );
+			
 			
 			updateSelected();
 		})
@@ -247,7 +270,7 @@
 					
 					case 13: // enter
 					case 32: // space
-						$label.trigger('click', e.keyCode);
+						$label.trigger('click', [e.keyCode]);
 						break;
 				};
 			
@@ -283,105 +306,54 @@
 		// remove the original form element
 		$original.remove();
 
-		function toggleArrow(){
-			$select.find("img").attr('src', ($select.hasClass('ui-state-hover') || $select.hasClass('ui-state-focus') ? 'arrow_hover.gif' : 'arrow.gif') );
-		};
-		
 		function updateSelected(){
-			var $input = $options.prev('a.multiSelect').find('input'),
-			    display = '',
-			    $inputs = $options.find('input:checkbox').not('input.ui-multiselect-all'),
+			var $input = $options.prev('a.ui-multiselect').find('input'),
+			    $inputs = $labels.find('input'),
 			    $checked = $inputs.filter('input:checked'),
+			    list = '',
 			    numChecked = $checked.length;
 			
 			if(numChecked === 0){
 				$input.val( o.noneSelected );
 			} else {
 			
-				if(o.oneOrMoreSelected === '*'){
+				// list items?
+				if(o.selectedList){
 					$checked.each(function(){
 						var text = $(this).parent().text();
-						if(text !== o.selectAllText) display += text + ', ';
+						list = (list.length) ? (list += ', ' + text) : text;
 					});
-					display = display.substr(0, display.length - 2);
-					$input.val( display );
+					
+					$input.val( list );
 				} else {
-					$input.val( o.oneOrMoreSelected.replace('%', numChecked) );
+					$input.val( o.selectedText.replace('%', numChecked) );
 				};
 			};
-
 		};
-		
-		function adjustViewport(){
-			var $label = $options.find('label.ui-state-hover');
-			
-			if(!$label.length){
-				$options.scrollTop(0);
-				return;
-			}
-			
-			// check for and move down
-			//var selectionBottom = $options.find('label.ui-state-hover').position().top + $options.find('label.ui-state-hover').outerHeight();
-		
-			//if(selectionBottom > $options.innerHeight()){
-			//	$options.scrollTop( $options.scrollTop() + selectionBottom - $options.innerHeight());
-			//}
-		
-			// check for and move up
-			//if($options.find('label.ui-state-hover').position().top < 0){		
-			//	$options.scrollTop($options.scrollTop() + $options.find('label.ui-state-hover').position().top);
-			//}
-			
-			/*
-			var i = 0,
-			    selectionTop = 0,
-			    selectionHeight = 0,
-			    divHeight;
-			
-			$options
-			.find('label')
-			.each(function(){
-				var $this = $(this);
+	}
 	
-				if($this.hasClass('ui-state-hover')){ 
-					selectionTop = i; 
-					selectionHeight = $this.outerHeight(); 
-					return; 
-				};
-	
-				i += $this.outerHeight();
-			});
-
-			//divScroll = $container.scrollTop();
-			divHeight = $options.height();
-			
-			// adjust the dropdown scroll position
-			$options.scrollTop( selectionTop-((divHeight/2)-(selectionHeight/2)) );
-			*/
-		};
-	};
-	
-	// close each select when clicking on any other element
+	// close each select when clicking on any other element/anywhere else on the page
 	$(document).bind("click", function(e){
 		var $target = $(e.target);
 
-		if($target.closest("div.multiSelectOptions").length === 0 && !$target.parent().hasClass("multiSelect")){
-			$("div.multiSelectOptions").trigger("close", [true]);
+		if(!$target.closest("div.ui-multiselect-options").length && !$target.parent().hasClass("ui-multiselect")){
+			$("div.ui-multiselect-options").trigger("close", [true]);
 		}
 	});
 	
 	// default options
-	$.MultiSelect.defaults = {
-		selectAll: true,
-		selectAllText: 'Check all',
+	MultiSelect.defaults = {
+		showHeader:true,
+		checkAllText: 'Check all',
+		unCheckAllText: 'Uncheck all',
 		noneSelected: 'Select options',
-		oneOrMoreSelected: '% selected',
+		selectedList: false,
+		selectedText: '% selected',
 		position: 'middle', /* above|middle|below */
 		applyShadow: true,
 		closeSpeed: 200,
 		onCheck: function(){},
-		onOpen: function(){},
-		onClose: function(){}
+		onOpen: function(){}
 	};
 
 })(jQuery);

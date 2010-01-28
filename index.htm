@@ -13,27 +13,24 @@
 
 <style type="text/css">
 body { font: 12px Arial, sans-serif; }
+h2 { font-size:14px; padding:0; margin:10px 0 }
 </style>
 
 <script type="text/javascript">
 $(function(){
 
-	 $('#themeswitcher').themeswitcher({ loadTheme: 'humanity' });
+	$('#themeswitcher').themeswitcher({ loadTheme: 'lightness' });
 	 
-	 
-	// Default options
-	$("#example1, #example2, #example4").multiSelect();
+	// default options
+	$("select.multiselect").multiSelect();
 
 	// position
 	$("#example5").multiSelect({ position:'below', applyShadow:false });
 	
-	// With callback
+	// callbacks
 	$("#example3").multiSelect({
 		onOpen: function(){
 			console.log(this, 'opened');
-		},
-		onClose: function(){
-			console.log(this, 'closed');
 		},
 		onCheck: function(){
 			
@@ -42,18 +39,13 @@ $(function(){
 		}
 	});
 	
-	// Options displayed in comma-separated list
-	$("#example7").multiSelect({ oneOrMoreSelected: '*' });
+	// oOptions displayed in comma-separated list
+	$("#example6").multiSelect({ selectedList:true });
 	
-	// 'Select All' text changed
-	$("#example8").multiSelect({ selectAllText: 'Select all options' });
-	
-	// Show test data
-	$("FORM").submit( function() {
-		var results = $(this).serialize().replace(/&/g, '\n');
-		results = decodeURI(results);
-		alert(results);
-		return false;
+	// 'Check All' text changed
+	$("#example7").multiSelect({ 
+		checkAllText: 'Select All',
+		unCheckAllText: 'Deselect All'
 	});
 	
 });
@@ -65,12 +57,13 @@ $(function(){
 	
 	<h1>jQuery MultiSelect</h1>
 	<div id="themeswitcher"></div>
+	<p>&nbsp;</p>
 	
 	<form action="" method="post">
 
 	<h2>Example 1: Basic</h2>
 	<p>
-		<select id="example1" multiple="multiple" size="5">
+		<select class="multiselect" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -89,7 +82,7 @@ $(function(){
 
 	<h2>Example 2: Pre-selected options</h2>
 	<p>
-		<select id="example2" multiple="multiple" size="5">
+		<select class="multiselect" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1" selected="selected">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -101,7 +94,7 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 3: All callbacks</h2>
+	<h2>Example 3: onOpen, onCheck callbacks</h2>
 	<p>
 		<select id="example3" multiple="multiple" size="5">
 		<option value=""></option>
@@ -115,9 +108,9 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 4: optgroup support</h2>
+	<h2>Example 4: Optgroup support</h2>
 	<p>
-		<select id="example4" multiple="multiple" size="5">
+		<select class="multiselect" multiple="multiple" size="5">
 		<optgroup label="Group One">
 			<option value="option1">Option 1</option>
 			<option value="option2">Option 2</option>
@@ -146,35 +139,34 @@ $(function(){
 		</select>
 	</p>
 	
-	<h2>Example 7: Options displayed in comma-separated list</h2>
+	<h2>Example 6: Options displayed in comma-separated list</h2>
+	<p>
+		<select id="example6" multiple="multiple" size="5">
+		<option value=""></option>
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		<option value="option6">Option 6</option>
+		<option value="option7">Option 7</option>
+		</select>
+	</p>
+
+	<h2>Example 7: &ldquo;Check All&rdquo; text changed</h2>
 	<p>
 	<select id="example7" multiple="multiple" size="5">
-	<option value=""></option>
-	<option value="option1">Option 1</option>
-	<option value="option2">Option 2</option>
-	<option value="option3">Option 3</option>
-	<option value="option4">Option 4</option>
-	<option value="option5">Option 5</option>
-	<option value="option6">Option 6</option>
-	<option value="option7">Option 7</option>
+		<option value=""></option>
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		<option value="option6">Option 6</option>
+		<option value="option7">Option 7</option>
 	</select>
 	</p>
 
-	<h2>Example 8: &ldquo;Select All&rdquo; text changed</h2>
-	<p>
-	<select id="example8" multiple="multiple" size="5">
-	<option value=""></option>
-	<option value="option1">Option 1</option>
-	<option value="option2">Option 2</option>
-	<option value="option3">Option 3</option>
-	<option value="option4">Option 4</option>
-	<option value="option5">Option 5</option>
-	<option value="option6">Option 6</option>
-	<option value="option7">Option 7</option>
-	</select>
-	</p>
-
-	<p><input type="submit" value="Show Results" /></p>
 	</form>
 	
 </body>
