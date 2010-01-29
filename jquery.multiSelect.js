@@ -2,7 +2,7 @@
  * jQuery multiSelect 0.1
  * by Eric Hynds, 2010
  *
- * Based off of Cory S.N. LaViska's implementation, A Beautiful Site (http://abeautifulsite.net/) 2009
+ * Inspired by Cory S.N. LaViska's implementation, A Beautiful Site (http://abeautifulsite.net/) 2009
  *
  * Licensing & Terms of Use
  * 
@@ -13,6 +13,7 @@
 */
 
 (function($){
+	
 	$.fn.extend({
 		multiSelect: function(opts){
 			opts = $.extend({}, MultiSelect.defaults, opts);
@@ -22,7 +23,8 @@
 			});
 		}
 	});
-		var MultiSelect = function(select,o){
+	
+	var MultiSelect = function(select,o){
 		var $select = $original = $(select), $options, $labels, html = '', optgroups = [];
 		
 		//html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
@@ -37,10 +39,10 @@
 			html += '<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close ui-icon ui-icon-circle-close"></a></li>';
 			html += '</ul>';
 			html += '</div>';
-		}
+		};
 		
 		// build options
-		html += '<ul class="multiselect-checkboxes ui-helper-reset">';
+		html += '<ul class="ui-multiselect-checkboxes ui-helper-reset">';
 		$select.find('option').each(function(i){
 			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent();
 			
@@ -48,7 +50,7 @@
 				var label = $parent.attr("label");
 				
 				if($.inArray(label, optgroups) === -1){
-					html += '<li class="multiselect-optgroup-label"><span>' + label + '</span></li>';
+					html += '<li class="ui-multiselect-optgroup-label"><span>' + label + '</span></li>';
 					optgroups.push(label);
 				}
 			}
@@ -71,29 +73,16 @@
 		// the select box events
 		$select
 		.bind('mouseover mouseout', function(e){
-			$(this)[(e.type === 'mouseover') ? 'addClass' : 'removeClass']('ui-state-hover');
+			$(this)[ (e.type === 'mouseover') ? 'addClass' : 'removeClass' ]('ui-state-hover');
 		})
 		.bind('focus blur', function(e){
-			$(this)[(e.type === 'focus') ? 'addClass' : 'removeClass']('ui-state-focus');
+			$(this)[ (e.type === 'focus') ? 'addClass' : 'removeClass' ]('ui-state-focus');
 		})
 		.bind('click', function(e){
 			$options.trigger( $options.is(':hidden') ? 'open' : 'close' );
 		})
-		.bind('keydown', function(e){
+		.bind('keypress', function(e){
 			switch(e.keyCode){
-				case 40: // down
-				case 32: // space
-					if(!$options.is(':visible')){
-					
-						// go to the first option
-						$options.find('li:first label').trigger('mouseenter open');
-						
-					} else { 
-						$options.trigger('close');
-					}
-					e.preventDefault();
-					break;
-					
 				case 27: // esc
 					$options.trigger('close');
 					break;
@@ -121,7 +110,7 @@
 			
 				e.preventDefault();
 			});
-		}
+		};
 		
 		// bind custom events to the options div
 		$options.bind({
@@ -144,7 +133,7 @@
 				};
 			},
 			'open': function(e){
-				var offset = $select.position(), timer, listHeight = 0, top;
+				var offset = $select.position(), $container = $options.find("ul:eq(1)"), timer, listHeight = 0, top;
 				
 				// calling select is active
 				$select.addClass('ui-state-active');
@@ -152,16 +141,17 @@
 				// hide all other options
 				$options.trigger("close", [true]);
 				
-				// determine positioning
+				// calculate positioning
 				if(o.position === 'middle'){
 					top = ( offset.top+($select.height()/2)-($options.outerHeight()/2) );
-					
 				} else if(o.position === 'top'){
 					top = (offset.top-$options.outerHeight());
-					
 				} else {
 					top = (offset.top + $select.outerHeight());
-				}
+				};
+				
+				// calculate the width
+				width = $select.width()-parseInt($options.css('padding-left'))-parseInt($options.css('padding-right'));
 				
 				// select the first option
 				$labels.filter("label:first").trigger("mouseenter");
@@ -171,46 +161,44 @@
 				.css({ 
 					position: 'absolute',
 					top: top+'px',
-					left: offset.left + 'px',
-					width: $select.outerWidth()-8 + 'px' // TODO get actual padding
-					//width:$select.width()-($options.outerWidth()-$options.width())+'px'
+					left: offset.left+'px',
+					width: width+'px'
 				})
-				.show()
-				.scrollTop(0);
+				.show();
+				
+				// set the scroll of the checkbox container
+				$container.scrollTop(0);
 				
 				// set the height of the checkbox container
 				if(o.maxHeight){
-					$options.find("ul.multiselect-checkboxes").css("height", o.maxHeight );
-				}
+					$container.css("height", o.maxHeight );
+				};
 				
 				o.onOpen.call($options[0]);
 			},
 			'traverse': function(e, start, keycode){
-				var $start = $(start), $next;
+				var $start = $(start), moveToLast = (keycode === 38 || keycode === 37) ? true : false; 
 				
-				// remove classes from all other labels
-				$start.removeClass('ui-state-active ui-state-hover ui-state-focus');
-			
-				$next = $start
-					.parent()[ (keycode === 38 || keycode === 37) ? 'prev' : 'next' ]('li')
-					.find('label')
-					.trigger('mouseenter');
-					
-				// if up and at the bottom, move to the top
+				// attempt to move to the next label
+				var $next = $start.parent()[ moveToLast ? 'prev' : 'next' ]('li').find('label').trigger('mouseenter');
+				
+				// if at the first/last element
 				if(!$next.length){
-					switch(keycode){
-						case 38: $options.find('label:last').trigger('mouseover'); break;
-						case 40: $options.find('label:first').trigger('mouseover'); break;
-					};
+					var $container = $options.find("ul:eq(1)");
+					
+					// move to the first/last
+					$options.find('label')[ moveToLast ? 'last' : 'first' ]().trigger('mouseover');
+					
+					// set scroll position
+					$container.scrollTop( moveToLast ? $container.height() : 0 );
 				};
-
-				e.preventDefault();
 			},
 			'toggleChecked': function(e, flag){
+				var $inputs = $labels.find("input");
 				if(flag){
-					$labels.find("input").attr("checked","checked"); 
+					$inputs.attr("checked","checked"); 
 				} else {
-					$labels.find("input").removeAttr("checked");
+					$inputs.removeAttr("checked");
 				}
 				
 				updateSelected();
@@ -224,80 +212,67 @@
 			$labels.removeClass('ui-state-hover');
 			$(this).addClass('ui-state-hover').find("input").focus();
 		})
-		.bind('click', function(e){
-			var $target = $(e.target);
+		.bind('click', function(e,caller){
+			// if the label was clicked, trigger the click event on the checkbox.  IE6 fix
+			e.preventDefault();
+			$(this).find("input").trigger("click", [true]);
+		})
+		.bind('keyup', function(e){
+			switch(e.keyCode){
+				case 9: // tab
+					$options.trigger('close');
+					$select.next(":input").focus();
+					break;
 
-			// only perform logic on the checkbox
-			if( $target.is("label") ){
-				return;
+				case 27: // esc
+					$options.trigger('close');
+					break;
+			
+				case 38: // up
+				case 40: // down
+				case 37: // left
+				case 39: // right
+					$options.trigger('traverse', [this, e.keyCode]);
+					break;
+				
+				case 13: // enter
+					e.preventDefault();
+					$(this).click();
+					break;
+			};
+		})
+		.find('input')
+		.bind('click', function(e, label){
+			var $this = $(this);
+			label = label || false;
+			
+			// stop this click from bubbling up to the label
+			e.stopPropagation();
+			
+			// if the click originated from the label, stop the click event and manually toggle the checked state
+			if(label){
+				e.preventDefault();
+				if($this.is(":checked")){
+					$this.removeAttr("checked");
+				} else {
+					$this.attr("checked","checked");
+				}
 			}
 			
-			o.onCheck.call( $target[0] );
+			o.onCheck.call( $this[0] );
 			updateSelected();
-		})
-		.bind('keypress', function(e){
-			if($options.is(':visible')){
-			
-				switch(e.keyCode){
-					
-					case 9: // tab
-						$options.trigger('close');
-						$select.next(":input").focus();
-						break;
-				
-					case 27: // esc
-						$options.trigger('close');
-						break;
-				
-					case 38: // up
-					case 40: // down
-					case 37: // left
-					case 39: // right
-						$options.trigger('traverse', [this, e.keyCode]);
-						break;
-					
-					case 13: // enter
-					case 32: // space
-						$label.trigger('click', [e.keyCode]);
-						break;
-				};
-			
-			// dropdown is not visible
-			} else {
-				
-				switch(e.keyCode){
-				
-					 // down, enter, space
-					case 38:
-					case 40:
-					case 13:
-					case 32:
-						// show dropdown
-						$this.removeClass('ui-state-focus').trigger('click');
-						$options.find('label:first').addClass('ui-state-hover');
-						e.preventDe4fault();
-						break;
-					
-					//  Tab key
-					case 9:
-						// Shift focus to next INPUT element on page
-						$this.focus().next(':input').focus();
-						//return true;
-						break;
-				};
-			};
 		});
 		// apply bgiframe if available
 		if($.fn.bgiframe){
-			$options.bgiframe();		}
+			$options.bgiframe();		};
 		
-		// remove the original form element
+		// remove the original input element
 		$original.remove();
 
 		function updateSelected(){
-			var $input = $options.prev('a.ui-multiselect').find('input'),
+			var $input = $select.find("input"),
 			    $inputs = $labels.find('input'),
-			    $checked = $inputs.filter('input:checked'),
+			    $checked = $inputs.filter(":checked"),
 			    value = '',
 			    numChecked = $checked.length;
 			
@@ -312,13 +287,15 @@
 						value = (value.length) ? (value += ', ' + text) : text;
 					});
 				} else {
-					value = o.selectedText.replace('%', numChecked);
+					value = o.selectedText.replace('#', numChecked);
 				};
 				
 				$input.val( value ).attr("title", value);
 			};
 		};
-	}
+
+		return $options;
+	};
 	
 	// close each select when clicking on any other element/anywhere else on the page
 	$(document).bind("click", function(e){
@@ -326,7 +303,7 @@
 
 		if(!$target.closest("div.ui-multiselect-options").length && !$target.parent().hasClass("ui-multiselect")){
 			$("div.ui-multiselect-options").trigger("close", [true]);
-		}
+		};
 	});
 	
 	// default options
@@ -337,7 +314,7 @@
 		unCheckAllText: 'Uncheck all',
 		noneSelected: 'Select options',
 		selectedList: false,
-		selectedText: '% selected',
+		selectedText: '# selected',
 		position: 'bottom', /* top|middle|bottom */
 		shadow: false,
 		fadeSpeed: 200,
