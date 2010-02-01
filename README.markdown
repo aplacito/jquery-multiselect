@@ -1,6 +1,8 @@
-# jQuery MultiSelect
+# jQuery MultiSelect Plugin
 
-This is a fork & overhaul of the multiSelect plugin by Cory S.N. LaViska, A Beautiful Site (http://www.abeautifulsite.net).  I'm adding themeroller
-support, greatly increasing performance, reorganizing the code, adding some features, etc.  Consider it in alpha stage.
+This plugin turns an ordinary HTML select control into elegant drop down list of checkboxes, stylable with ThemeRoller.  
+Based off of Cory S.N. LaViska's implementation, A Beautiful Site (http://www.abeautifulsite.net) 2009.
 
+Demos and documentation @ [http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/](http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/)  
 
+![Example](http://www.erichynds.com/examples/jquery-multiselect/screenshot.gif)
