@@ -1,15 +1,12 @@
 /*
- * jQuery multiSelect 0.1
- * by Eric Hynds, 2010
+ * jQuery MultiSelect Plugin 0.1
+ * Copyright (c) 2009 Eric Hynds
  *
  * Inspired by Cory S.N. LaViska's implementation, A Beautiful Site (http://abeautifulsite.net/) 2009
  *
- * Licensing & Terms of Use
- * 
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
- *
 */
 
 (function($){
@@ -256,8 +253,8 @@
 					$this.removeAttr("checked");
 				} else {
 					$this.attr("checked","checked");
-				}
-			}
+				};
+			};
 			
 			o.onCheck.call( $this[0] );
 			updateSelected();
