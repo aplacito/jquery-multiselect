@@ -1,6 +1,6 @@
 /*
  * jQuery MultiSelect Plugin 0.1
- * Copyright (c) 2009 Eric Hynds
+ * Copyright (c) 2010 Eric Hynds
  *
  * Inspired by Cory S.N. LaViska's implementation, A Beautiful Site (http://abeautifulsite.net/) 2009
  *
