@@ -145,7 +145,7 @@
 				} else if(o.position === 'top'){
 					top = (offset.top-$options.outerHeight());
 				} else {
-					top = (offset.top + $select.outerHeight());
+					top = (offset.top+$select.outerHeight());
 				};
 				
 				// calculate the width
@@ -209,7 +209,6 @@
 			},
 			click: function(e,caller){
 				// if the label was clicked, trigger the click event on the checkbox.  IE6 fix
-				
 				e.preventDefault();
 				$(this).find("input").trigger("click", [true]); 
 			},
@@ -287,7 +286,7 @@
 						value = (value.length) ? (value += ', ' + text) : text;
 					});
 				} else {
-					value = o.selectedText.replace('#', numChecked);
+					value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
 				};
 				
 				$input.val( value ).attr("title", value);

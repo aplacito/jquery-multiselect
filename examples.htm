@@ -44,7 +44,8 @@ $(function(){
 	// 'Check All' text changed
 	$("#example7").multiSelect({ 
 		checkAllText: 'Select All',
-		unCheckAllText: 'Deselect All'
+		unCheckAllText: 'Deselect All',
+		selectedText: '# of # selected'
 	});
 	
 	$("#examples").submit(function(e){
@@ -137,7 +138,7 @@ $(function(){
 	</p>
 	
 
-	<h2>Example 5: Change the positioning to &quot;middle&quot;, no header with a CSS drop shadow</h2>
+	<h2>Example 5: Positioning set to &quot;middle&quot;; no header with a CSS drop shadow</h2>
 	<p>
 		<select name="example5" id="example5" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
@@ -164,7 +165,7 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 7: &ldquo;Check All&rdquo; text changed</h2>
+	<h2>Example 7: &quot;Check All&quot; text changed; input displays the number checked &amp; the total number of checkboxes</h2>
 	<p>
 		<select name="example7" id="example7" multiple="multiple" size="5">
 		<option value=""></option>
@@ -183,6 +184,6 @@ $(function(){
 	
 	<input type="submit" name="submit" value="Click to Serialize" />
 	</form>
-	
+	<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 </body>
 </html>
