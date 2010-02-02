@@ -1,5 +1,5 @@
 /*
- * jQuery MultiSelect Plugin 0.1
+ * jQuery MultiSelect Plugin 0.2
  * Copyright (c) 2010 Eric Hynds
  *
  * Inspired by Cory S.N. LaViska's implementation, A Beautiful Site (http://abeautifulsite.net/) 2009
@@ -22,76 +22,53 @@
 	});
 	
 	var MultiSelect = function(select,o){
-		var $select = $original = $(select), $options, $labels, html = '', optgroups = [];
+		var $select = $original = $(select), $options, $labels, html = [], optgroups = [];
 		
-		//html += '<a class="multiSelect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><img src="arrow.gif" class="multiSelect-arrow" alt="" /></a>';
-		html += '<a class="ui-multiselect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>';
-		html += '<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">';
+		html.push('<a class="ui-multiselect ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
+		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">');
 	
 		if(o.showHeader){
-			html += '<div class="ui-widget-header ui-helper-clearfix ui-corner-all ui-multiselect-header">';
-			html += '<ul class="ui-helper-reset">';
-			html += '<li><a class="ui-multiselect-all" href=""><span class="ui-icon ui-icon-check"></span>' + o.checkAllText + '</a></li>';
-			html += '<li><a class="ui-multiselect-none" href=""><span class="ui-icon ui-icon-closethick"></span>' + o.unCheckAllText + '</a></li>';
-			html += '<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close ui-icon ui-icon-circle-close"></a></li>';
-			html += '</ul>';
-			html += '</div>';
+			html.push('<div class="ui-widget-header ui-helper-clearfix ui-corner-all ui-multiselect-header">');
+			html.push('<ul class="ui-helper-reset">');
+			html.push('<li><a class="ui-multiselect-all" href=""><span class="ui-icon ui-icon-check"></span>' + o.checkAllText + '</a></li>');
+			html.push('<li><a class="ui-multiselect-none" href=""><span class="ui-icon ui-icon-closethick"></span>' + o.unCheckAllText + '</a></li>');
+			html.push('<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close ui-icon ui-icon-circle-close"></a></li>');
+			html.push('</ul>');
+			html.push('</div>');
 		};
 		
 		// build options
-		html += '<ul class="ui-multiselect-checkboxes ui-helper-reset">';
-		$select.find('option').each(function(i){
-			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent();
+		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
+		$select.find('option').each(function(){
+			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is("optgroup");
 			
-			if($parent.is("optgroup")){
+			if(hasOptGroup){
 				var label = $parent.attr("label");
 				
 				if($.inArray(label, optgroups) === -1){
-					html += '<li class="ui-multiselect-optgroup-label"><span>' + label + '</span></li>';
+					html.push('<li class="ui-multiselect-optgroup-label"><span>' + label + '</span></li>');
 					optgroups.push(label);
-				}
-			}
+				};
+			};
 			
 			if(len > 0){
-				html += $this.parent().is("optgroup") ? '<li class="multiSelect-optgroup">' : '<li>';
-				html += '<label class="ui-corner-all"><input type="checkbox" name="' + $select.attr('name') + '" value="' + value + '"';
-				if($this.is(':selected')) html += ' checked="checked"';
-				html += ' />' + $this.html() + '</label></li>';
+				html.push(hasOptGroup ? '<li class="multiSelect-optgroup">' : '<li>');
+				html.push('<label class="ui-corner-all"><input type="checkbox" name="' + $select.attr('name') + '" value="' + value + '"');
+				if($this.is(':selected')){
+					html.push(' checked="checked"');
+				};
+				html.push(' />' + $this.html() + '</label></li>');
 			};
 		});
-		html += '</ul></div>';
+		html.push('</ul></div>');
 		
 		// cache queries
-		$select  = $select.after(html).next('a.ui-multiselect');
+		$select  = $select.after( html.join('') ).next('a.ui-multiselect');
 		$options = $select.next('div.ui-multiselect-options');
 		$header  = $options.find('div.ui-multiselect-header');
 		$labels  = $options.find("label");
-		
-		// the select box events
-		$select
-		.bind('mouseover mouseout', function(e){
-			$(this)[ (e.type === 'mouseover') ? 'addClass' : 'removeClass' ]('ui-state-hover');
-		})
-		.bind('focus blur', function(e){
-			$(this)[ (e.type === 'focus') ? 'addClass' : 'removeClass' ]('ui-state-focus');
-		})
-		.bind('click', function(e){
-			$options.trigger( $options.is(':hidden') ? 'open' : 'close' );
-		})
-		.bind('keypress', function(e){
-			switch(e.keyCode){
-				case 27: // esc
-					$options.trigger('close');
-					break;
-			};
-		})
-		.each(function(){
-			// update the number of selected elements when the page initally loads
-			updateSelected();
-		});
-		
-		
-		// header links
+
+		// build header links
 		if(o.showHeader){
 			$header.find("a").click(function(e){
 				var $target = $(e.target);
@@ -103,11 +80,35 @@
 				// check all / uncheck all
 				} else {
 					$options.trigger('toggleChecked', [($target.hasClass("ui-multiselect-all") ? true : false)]);
-				}
+				};
 			
 				e.preventDefault();
 			});
 		};
+		
+		// the select box events
+		$select.bind({
+			click: function(){
+				$options.trigger( $options.is(':hidden') ? 'open' : 'close' );
+			},
+			keypress: function(e){
+				if(e.keyCode === 27){ // esc
+					$options.trigger('close');
+				};
+			},
+			mouseover: function(){
+				$(this).addClass('ui-state-hover');
+			},
+			mouseout: function(){
+				$(this).removeClass('ui-state-hover');
+			},
+			focus: function(){
+				$(this).addClass('ui-state-focus');
+			},
+			blur: function(){
+				$(this).removeClass('ui-state-focus');
+			}
+		});
 		
 		// bind custom events to the options div
 		$options.bind({
@@ -154,14 +155,12 @@
 				$labels.filter("label:first").trigger("mouseenter");
 				
 				// show the options div + position it
-				$options
-				.css({ 
+				$options.css({ 
 					position: 'absolute',
 					top: top+'px',
 					left: offset.left+'px',
 					width: width+'px'
-				})
-				.show();
+				}).show();
 				
 				// set the scroll of the checkbox container
 				$container.scrollTop(0);
@@ -202,41 +201,42 @@
 			}
 		});
 		
-		
-		// labels
-		$labels
-		.bind('mouseenter', function(e){
-			$labels.removeClass('ui-state-hover');
-			$(this).addClass('ui-state-hover').find("input").focus();
-		})
-		.bind('click', function(e,caller){
-			// if the label was clicked, trigger the click event on the checkbox.  IE6 fix
-			e.preventDefault();
-			$(this).find("input").trigger("click", [true]);
-		})
-		.bind('keyup', function(e){
-			switch(e.keyCode){
-				case 9: // tab
-					$options.trigger('close');
-					$select.next(":input").focus();
-					break;
-
-				case 27: // esc
-					$options.trigger('close');
-					break;
-			
-				case 38: // up
-				case 40: // down
-				case 37: // left
-				case 39: // right
-					$options.trigger('traverse', [this, e.keyCode]);
-					break;
+		// labels/checkbox events
+		$labels.bind({
+			mouseenter: function(){
+				$labels.removeClass('ui-state-hover');
+				$(this).addClass('ui-state-hover').find("input").focus();
+			},
+			click: function(e,caller){
+				// if the label was clicked, trigger the click event on the checkbox.  IE6 fix
 				
-				case 13: // enter
-					e.preventDefault();
-					$(this).click();
-					break;
-			};
+				e.preventDefault();
+				$(this).find("input").trigger("click", [true]); 
+			},
+			keyup: function(e){
+				switch(e.keyCode){
+					case 9: // tab
+						$options.trigger('close');
+						$select.next(":input").focus();
+						break;
+
+					case 27: // esc
+						$options.trigger('close');
+						break;
+			
+					case 38: // up
+					case 40: // down
+					case 37: // left
+					case 39: // right
+						$options.trigger('traverse', [this, e.keyCode]);
+						break;
+				
+					case 13: // enter
+						e.preventDefault();
+						$(this).click();
+						break;
+				};
+			}
 		})
 		.find('input')
 		.bind('click', function(e, label){
@@ -266,6 +266,9 @@
 		// remove the original input element
 		$original.remove();
 
+		// update the number of selected elements when the page initally loads
+		updateSelected();
+		
 		function updateSelected(){
 			var $input = $select.find("input"),
 			    $inputs = $labels.find('input'),
