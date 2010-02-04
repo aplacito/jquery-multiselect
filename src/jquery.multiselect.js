@@ -67,6 +67,15 @@
 		$options = $select.next('div.ui-multiselect-options');
 		$header  = $options.find('div.ui-multiselect-header');
 		$labels  = $options.find("label");
+		
+		var iconWidth = $select.find("span.ui-icon").outerWidth(), inputWidth = $original.outerWidth(), totalWidth = inputWidth+iconWidth;
+		if( /\d/.test(o.minWidth) && totalWidth < o.minWidth){
+			inputWidth = o.minWidth-iconWidth;
+			totalWidth = o.minWidth;
+		};
+		
+		// set widths
+		$select.width(totalWidth + 'px').find("input").width(inputWidth + 'px');
 
 		// build header links
 		if(o.showHeader){
@@ -96,10 +105,10 @@
 					$options.trigger('close');
 				};
 			},
-			mouseover: function(){
+			mouseenter: function(){
 				$(this).addClass('ui-state-hover');
 			},
-			mouseout: function(){
+			mouseleave: function(){
 				$(this).removeClass('ui-state-hover');
 			},
 			focus: function(){
@@ -131,13 +140,20 @@
 				};
 			},
 			'open': function(e){
-				var offset = $select.position(), $container = $options.find("ul:eq(1)"), timer, listHeight = 0, top;
+				var offset = $select.position(), $container = $options.find("ul:eq(1)"), timer, listHeight = 0, top, width;
 				
 				// calling select is active
 				$select.addClass('ui-state-active');
 				
 				// hide all other options
 				$options.trigger("close", [true]);
+				
+				// if the options aren't going to be in view, change the positioning
+				/*
+				console.log( $(document).height()-offset.top, o.maxHeight  );
+				if( $(document).height()-offset.top < o.maxHeight ){
+					o.position = 'top';
+				};*/
 				
 				// calculate positioning
 				if(o.position === 'middle'){
@@ -148,7 +164,7 @@
 					top = (offset.top+$select.outerHeight());
 				};
 				
-				// calculate the width
+				// calculate the width of the options menu
 				width = $select.width()-parseInt($options.css('padding-left'))-parseInt($options.css('padding-right'));
 				
 				// select the first option
@@ -309,6 +325,7 @@
 	MultiSelect.defaults = {
 		showHeader: true,
 		maxHeight: 175, /* max height of the checkbox container (scroll) in pixels */
+		minWidth: 'auto', /* min width of the entire widget in pixels, or "auto" */
 		checkAllText: 'Check all',
 		unCheckAllText: 'Uncheck all',
 		noneSelected: 'Select options',

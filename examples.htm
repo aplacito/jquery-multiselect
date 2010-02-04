@@ -12,9 +12,18 @@
 
 <style type="text/css">
 body { font:12px Helvetical, Arial, sans-serif; }
+h1 { margin-bottom:0 }
 h2 { font-size:14px; padding:0; margin:10px 0 }
 p { margin:0; padding:0 }
+a { color:#001371 }
+#back { background:#16254B; margin:5px 0 8px 0 }
+#back div { padding:10px; color:#fff; font-size:14px }
+#back a { color:#fff }
+
 #callback { color:green }
+
+/* sets a min width on the selects. you can also use the minWidth parameter */
+select { width:200px }
 </style>
 
 <script type="text/javascript">
@@ -39,7 +48,7 @@ $(function(){
 	});
 	
 	// oOptions displayed in comma-separated list
-	$("#example6").multiSelect({ selectedList:true });
+	$("#example6").multiSelect({ selectedList:true, minWidth:400 });
 	
 	// 'Check All' text changed
 	$("#example7").multiSelect({ 
@@ -60,10 +69,17 @@ $(function(){
 </head>
 <body>
 	
-	<h1>jQuery MultiSelect Plugin Examples</h1>
+	<h1>jQuery MultiSelect Plugin - Examples</h1>
+	
+	<div id="back">
+		<div><a href="http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support">&laquo; Return to blog post &amp; documentation</a></div>
+	</div>
+	
+	
 	<p>This plugin turns an ordinary HTML select control into elegant drop down list of checkboxes, stylable with ThemeRoller.</p>
 	<ul>
-	<li><a href="http://github.com/ferric84/jquery-multiselect">Download @ GitHub</a></li>
+	<li>Download the <a href="http://github.com/ferric84/jquery-multiselect/raw/master/src/jquery.multiselect.js">source</a> or the <a href="http://github.com/ferric84/jquery-multiselect/raw/master/src/jquery.multiselect.min.js">minified</a> version</li>
+	<li><a href="http://github.com/ferric84/jquery-multiselect">Follow on GitHub</a></li>
 	<li><a href="http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/">Documentation, blog post, and comments</a></li>
 	</ul>
 
@@ -74,7 +90,7 @@ $(function(){
 	<form action="" method="post" id="examples">
 	<h2>Example 1: Basic</h2>
 	<p>
-		<select name="example1" class="multiselect" multiple="multiple" size="5">
+		<select name="example1" class="multiselect" multiple="multiple" size="5" style="width:200px">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -91,9 +107,9 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 2: Pre-selected options</h2>
+	<h2>Example 2: Pre-selected options; the width of the select element is set to 300px in CSS</h2>
 	<p>
-		<select name="example2" class="multiselect" multiple="multiple" size="5">
+		<select name="example2" class="multiselect" multiple="multiple" size="5" style="width:300px">
 		<option value=""></option>
 		<option value="option1" selected="selected">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -151,7 +167,7 @@ $(function(){
 		</select>
 	</p>
 	
-	<h2>Example 6: Options displayed in comma-separated list</h2>
+	<h2>Example 6: Options displayed in comma-separated list; minWidth parameter set to 400 (pixels).</h2>
 	<p>
 		<select name="example6" id="example6" multiple="multiple" size="5">
 		<option value=""></option>
