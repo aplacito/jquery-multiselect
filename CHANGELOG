@@ -1,20 +1,20 @@
 jQuery MultiSelect Changelog
 
-Version 0.2 - 02/04/2010
+Version 0.2 - 02/02/2010
 ==============================================
-- Modified: the out-of-event call to updateSelected() does not need to be in an each() loop
-- Modified: refactored $select bindings to use one bind() call, passing a key/value map
-- Fixed: removed a commented out line of 
-- Added: the selectedText can now take two pound-sign placeholders.  The second is replaced with the total number of checkboxes
+- Modified: the initial call to updateSelected() does not need to be in an each() loop.
+- Modified: refactored $select bindings to use one bind() call, passing a key/value map.
+- Fixed: removed a commented out line.
+- Added: the selectedText can now take two pound-sign placeholders.  The second is replaced with the total number of checkboxes.
 
 Version 0.3 - 02/04/2010
 ==============================================
-- Added: ability to toggle optgroup check state by clicking on the header
-- Added: onCheckAll, onUncheckAll, and onOptgroupToggle callbacks
-- Added: the selectedList now takes a number denoting the maximum number of items to display as a list until yielding to selectedText
-- Added: the widget's default width now inherits the width of the original select element
-- Added: mixWidth parameter
-- Added: link to documentation in comments
-- Fixed: global variable "width"
-- Modified: standardized using single quotes
-- Modified: refactored removeAttr("checked") to attr("checked", "")
+- Added: ability to toggle optgroup check state by clicking on the header.
+- Added: onCheckAll, onUncheckAll, and onOptgroupToggle callbacks.
+- Added: the selectedList now takes a number denoting the maximum number of items to display as a list until yielding to selectedText.
+- Added: the widget's default width now inherits the width of the original select element.
+- Added: mixWidth parameter to force a minimum width.
+- Added: link to documentation in comments.
+- Fixed: global variable "width".
+- Modified: standardized using single quotes.
+- Modified: refactored removeAttr("checked") to attr("checked", "").
