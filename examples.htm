@@ -8,19 +8,19 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js" type="text/javascript"></script>
 <script src="http://jqueryui.com/themeroller/themeswitchertool/" type="text/javascript"></script>
 <script src="src/jquery.bgiframe.js" type="text/javascript"></script>
-<script src="src/jquery.multiselect.js" type="text/javascript"></script>
+<script src="src/jquery.multiselect.min.js" type="text/javascript"></script>
 
 <style type="text/css">
-body { font:12px Helvetical, Arial, sans-serif; }
+body { font:12px Helvetical, Arial, sans-serif; padding-bottom:200px }
 h1 { margin-bottom:0 }
-h2 { font-size:14px; padding:0; margin:10px 0 }
-p { margin:0; padding:0 }
+h2 { font-size:14px; padding:0; margin:25px 0 5px 0 }
+p { margin:5px 0; padding:0 }
 a { color:#001371 }
 #back { background:#16254B; margin:5px 0 8px 0 }
 #back div { padding:10px; color:#fff; font-size:14px }
 #back a { color:#fff }
 
-#callback { color:green }
+#callback { color:green; font-weight:bold }
 
 /* sets a min width on the selects. you can also use the minWidth parameter */
 select { width:200px }
@@ -40,15 +40,31 @@ $(function(){
 	var $callback = $("#callback");
 	$("#example3").multiSelect({
 		onCheck: function(){
-			$callback.html("Checkbox with value " + this.value + ' clicked!');
+			$callback.html(this.value + ' ' + (this.checked ? 'checked' : 'unchecked') );
 		},
 		onOpen: function(){
 			$callback.html("Select opened!");
+		},
+		onCheckAll: function(){
+			$callback.html("Check all clicked!");
+		},
+		onUncheckAll: function(){
+			$callback.html("Uncheck all clicked!");
+		},
+		onOptgroupToggle: function(checkboxes){
+			var checked = $(checkboxes).is(":checked");
+			var values = [];
+			
+			$.each(checkboxes, function(i,box){
+				values[i] = box.value;
+			});
+			
+			$callback.html("Checkboxes " + (checked ? "checked" : "unchecked") + ": " + values.join(', ') );
 		}
 	});
 	
-	// oOptions displayed in comma-separated list
-	$("#example6").multiSelect({ selectedList:true, minWidth:400 });
+	// Options displayed in comma-separated list
+	$("#example6").multiSelect({ selectedList:5, minWidth:400 });
 	
 	// 'Check All' text changed
 	$("#example7").multiSelect({ 
@@ -70,22 +86,24 @@ $(function(){
 <body>
 	
 	<h1>jQuery MultiSelect Plugin - Examples</h1>
-	
+
 	<div id="back">
 		<div><a href="http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support">&laquo; Return to blog post &amp; documentation</a></div>
 	</div>
 	
-	<p>This plugin turns an ordinary HTML select control into elegant drop down list of checkboxes, stylable with ThemeRoller.</p>
-	<ul>
-	<li>Latest version 0.2 (2/2/2010)</li>
-	<li>Download the <a href="http://github.com/ferric84/jquery-multiselect/raw/0.2/src/jquery.multiselect.js">source</a> or the <a href="http://github.com/ferric84/jquery-multiselect/raw/0.2/src/jquery.multiselect.min.js">minified</a> version, and the <a href="http://www.erichynds.com/examples/jquery-multiselect/0.2/jquery.multiselect.css">CSS file</a>.</li>
+	<p>
+		This plugin turns an ordinary HTML select control into elegant drop down list of checkboxes, stylable with ThemeRoller.
+		The CSS of this demo page sets all select elements to 200px wide, but examples 2 and 6 override the default width in two different ways.
+	</p>
+	
+	<ul style="margin-bottom:20px">
+	<li>Latest version 0.3 (2/4/2010)</li>
+	<li>Download the <a href="http://github.com/ferric84/jquery-multiselect/raw/0.3/src/jquery.multiselect.js">source</a> or the <a href="http://github.com/ferric84/jquery-multiselect/raw/0.3/src/jquery.multiselect.min.js">minified</a> version, and the <a href="http://github.com/ferric84/jquery-multiselect/raw/0.3/jquery.multiselect.css">CSS file</a>.</li>
 	<li><a href="http://github.com/ferric84/jquery-multiselect">Follow on GitHub</a></li>
 	<li><a href="http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/">Documentation, blog post, and comments</a></li>
 	</ul>
 
-	<p>&nbsp;</p>
-	<div id="themeswitcher"></div>
-	<p>&nbsp;</p>
+	<p></p><div id="themeswitcher"></div>
 	
 	<form action="" method="post" id="examples">
 	<h2>Example 1: Basic</h2>
@@ -107,7 +125,9 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 2: Pre-selected options; the width of the select element is set to 300px in CSS</h2>
+	<h2>Example 2: Pre-selected options with a custom width</h2>
+	<p>Options one, three, and four have the <code>selected="selected"</code> attribute and are checked by default.  The
+	original select input has an inline-CSS width of 300px, which the MultiSelect widget inherits. </p>
 	<p>
 		<select name="example2" class="multiselect" multiple="multiple" size="5" style="width:300px">
 		<option value=""></option>
@@ -121,22 +141,26 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 3: onOpen, onCheck callbacks</h2>
+	<h2>Example 3: onOpen, onCheck, onCheckAll, onUncheckAll, and onOptgroupToggle callbacks</h2>
 	<p>
-		<div id="callback">Callback target</div>
+		<p id="callback">Callback target</p>
 		<select name="example3" id="example3" multiple="multiple" size="5">
-		<option value=""></option>
-		<option value="option1">Option 1</option>
-		<option value="option2">Option 2</option>
-		<option value="option3">Option 3</option>
-		<option value="option4">Option 4</option>
-		<option value="option5">Option 5</option>
-		<option value="option6">Option 6</option>
-		<option value="option7">Option 7</option>
+		<optgroup label="Group One">
+			<option value="option1">Option 1</option>
+			<option value="option2">Option 2</option>
+			<option value="option3">Option 3</option>
+		</optgroup>
+		<optgroup label="Group Two">
+			<option value="option4">Option 4</option>
+			<option value="option5">Option 5</option>
+			<option value="option6">Option 6</option>
+			<option value="option7">Option 7</option>
+		</optgroup>
 		</select>
 	</p>
 
 	<h2>Example 4: Optgroup support</h2>
+	<p>Click on an optgroup's heading to toggle the checked state of the entire group.</p>
 	<p>
 		<select name="example4" class="multiselect" multiple="multiple" size="5">
 		<optgroup label="Group One">
@@ -167,7 +191,9 @@ $(function(){
 		</select>
 	</p>
 	
-	<h2>Example 6: Options displayed in comma-separated list; minWidth parameter set to 400 (pixels).</h2>
+	<h2>Example 6: Demonstrating the <code>selectedList</code> and <code>minWidth</code> parameters</h2>
+	<p>The <code>selectedList</code> parameter is set to 5.  After 5 checkboxes have been checked, <code>selectedList</code>
+	is disabled and yields to the <code>selectedText</code> parameter.  <code>minWidth</code> is set to 400 (pixels).</p>
 	<p>
 		<select name="example6" id="example6" multiple="multiple" size="5">
 		<option value=""></option>
@@ -200,6 +226,5 @@ $(function(){
 	
 	<input type="submit" name="submit" value="Click to Serialize" />
 	</form>
-	<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 </body>
 </html>

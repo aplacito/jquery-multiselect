@@ -1,14 +1,14 @@
 /*
- * jQuery MultiSelect Plugin 0.2
+ * jQuery MultiSelect Plugin 0.3
  * Copyright (c) 2010 Eric Hynds
  *
+ * http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/
  * Inspired by Cory S.N. LaViska's implementation, A Beautiful Site (http://abeautifulsite.net/) 2009
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
 */
-
 (function($){
 	
 	$.fn.extend({
@@ -40,13 +40,13 @@
 		// build options
 		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
 		$select.find('option').each(function(){
-			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is("optgroup");
+			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup');
 			
 			if(hasOptGroup){
-				var label = $parent.attr("label");
+				var label = $parent.attr('label');
 				
 				if($.inArray(label, optgroups) === -1){
-					html.push('<li class="ui-multiselect-optgroup-label"><span>' + label + '</span></li>');
+					html.push('<li class="ui-multiselect-optgroup-label"><a href="#">' + label + '</a></li>');
 					optgroups.push(label);
 				};
 			};
@@ -66,9 +66,10 @@
 		$select  = $select.after( html.join('') ).next('a.ui-multiselect');
 		$options = $select.next('div.ui-multiselect-options');
 		$header  = $options.find('div.ui-multiselect-header');
-		$labels  = $options.find("label");
+		$labels  = $options.find('label');
 		
-		var iconWidth = $select.find("span.ui-icon").outerWidth(), inputWidth = $original.outerWidth(), totalWidth = inputWidth+iconWidth;
+		// calculate widths
+		var iconWidth = $select.find('span.ui-icon').outerWidth(), inputWidth = $original.outerWidth(), totalWidth = inputWidth+iconWidth;
 		if( /\d/.test(o.minWidth) && totalWidth < o.minWidth){
 			inputWidth = o.minWidth-iconWidth;
 			totalWidth = o.minWidth;
@@ -83,12 +84,14 @@
 				var $target = $(e.target);
 			
 				// close link
-				if($target.hasClass("ui-multiselect-close")){
+				if($target.hasClass('ui-multiselect-close')){
 					$options.trigger('close');
 			
 				// check all / uncheck all
 				} else {
-					$options.trigger('toggleChecked', [($target.hasClass("ui-multiselect-all") ? true : false)]);
+					var checkAll = $target.hasClass('ui-multiselect-all');
+					$options.trigger('toggleChecked', [(checkAll ? true : false)]);
+					o[ checkAll ? 'onCheckAll' : 'onUncheckAll']['call'](this);
 				};
 			
 				e.preventDefault();
@@ -129,7 +132,7 @@
 					$('div.ui-multiselect-options')
 					.filter(':visible')
 					.fadeOut(o.fadeSpeed)
-					.prev("a.ui-multiselect")
+					.prev('a.ui-multiselect')
 					.removeClass('ui-state-active')
 					.trigger('mouseout');
 					
@@ -140,20 +143,13 @@
 				};
 			},
 			'open': function(e){
-				var offset = $select.position(), $container = $options.find("ul:eq(1)"), timer, listHeight = 0, top, width;
+				var offset = $select.position(), $container = $options.find('ul:eq(1)'), timer, listHeight = 0, top, width;
 				
 				// calling select is active
 				$select.addClass('ui-state-active');
 				
 				// hide all other options
-				$options.trigger("close", [true]);
-				
-				// if the options aren't going to be in view, change the positioning
-				/*
-				console.log( $(document).height()-offset.top, o.maxHeight  );
-				if( $(document).height()-offset.top < o.maxHeight ){
-					o.position = 'top';
-				};*/
+				$options.trigger('close', [true]);
 				
 				// calculate positioning
 				if(o.position === 'middle'){
@@ -168,7 +164,7 @@
 				width = $select.width()-parseInt($options.css('padding-left'))-parseInt($options.css('padding-right'));
 				
 				// select the first option
-				$labels.filter("label:first").trigger("mouseenter");
+				$labels.filter('label:first').trigger('mouseenter');
 				
 				// show the options div + position it
 				$options.css({ 
@@ -183,7 +179,7 @@
 				
 				// set the height of the checkbox container
 				if(o.maxHeight){
-					$container.css("height", o.maxHeight );
+					$container.css('height', o.maxHeight );
 				};
 				
 				o.onOpen.call($options[0]);
@@ -205,34 +201,40 @@
 					$container.scrollTop( moveToLast ? $container.height() : 0 );
 				};
 			},
-			'toggleChecked': function(e, flag){
-				var $inputs = $labels.find("input");
-				if(flag){
-					$inputs.attr("checked","checked"); 
-				} else {
-					$inputs.removeAttr("checked");
-				}
-				
+			'toggleChecked': function(e, flag, group){
+				var $inputs = (group && group.length) ? group : $labels.find('input');
+				$inputs.attr('checked', (flag ? 'checked' : '')); 
 				updateSelected();
 			}
+		})
+		.find('li.ui-multiselect-optgroup-label a')
+		.click(function(e){
+			// optgroup label toggle support
+			var $checkboxes = $(this).parent().nextUntil('li.ui-multiselect-optgroup-label').find('input'),
+				total = $checkboxes.length,
+				checked = $checkboxes.filter(':checked').length;
+			
+			$options.trigger('toggleChecked', [ (checked === total) ? false : true, $checkboxes]);
+			o.onOptgroupToggle.call(this, $checkboxes.get() );
+			e.preventDefault();
 		});
 		
 		// labels/checkbox events
 		$labels.bind({
 			mouseenter: function(){
 				$labels.removeClass('ui-state-hover');
-				$(this).addClass('ui-state-hover').find("input").focus();
+				$(this).addClass('ui-state-hover').find('input').focus();
 			},
 			click: function(e,caller){
 				// if the label was clicked, trigger the click event on the checkbox.  IE6 fix
 				e.preventDefault();
-				$(this).find("input").trigger("click", [true]); 
+				$(this).find('input').trigger('click', [true]); 
 			},
 			keyup: function(e){
 				switch(e.keyCode){
 					case 9: // tab
 						$options.trigger('close');
-						$select.next(":input").focus();
+						$select.next(':input').focus();
 						break;
 
 					case 27: // esc
@@ -264,11 +266,7 @@
 			// if the click originated from the label, stop the click event and manually toggle the checked state
 			if(label){
 				e.preventDefault();
-				if($this.is(":checked")){
-					$this.removeAttr("checked");
-				} else {
-					$this.attr("checked","checked");
-				};
+				$this.attr('checked', $this.is(':checked') ? '' : 'checked');
 			};
 			
 			o.onCheck.call( $this[0] );
@@ -285,9 +283,9 @@
 		updateSelected();
 		
 		function updateSelected(){
-			var $input = $select.find("input"),
+			var $input = $select.find('input'),
 			    $inputs = $labels.find('input'),
-			    $checked = $inputs.filter(":checked"),
+			    $checked = $inputs.filter(':checked'),
 			    value = '',
 			    numChecked = $checked.length;
 			
@@ -295,8 +293,8 @@
 				$input.val( o.noneSelected );
 			} else {
 			
-				// list items?
-				if(o.selectedList){
+				// if selectedList is enabled, and the number of checked items is less/equal to the max specified
+				if(o.selectedList && $checked.length <= o.selectedList){
 					$checked.each(function(){
 						var text = $(this).parent().text();
 						value = (value.length) ? (value += ', ' + text) : text;
@@ -305,7 +303,7 @@
 					value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
 				};
 				
-				$input.val( value ).attr("title", value);
+				$input.val( value ).attr('title', value);
 			};
 		};
 
@@ -316,8 +314,8 @@
 	$(document).bind("click", function(e){
 		var $target = $(e.target);
 
-		if(!$target.closest("div.ui-multiselect-options").length && !$target.parent().hasClass("ui-multiselect")){
-			$("div.ui-multiselect-options").trigger("close", [true]);
+		if(!$target.closest('div.ui-multiselect-options').length && !$target.parent().hasClass('ui-multiselect')){
+			$('div.ui-multiselect-options').trigger('close', [true]);
 		};
 	});
 	
@@ -329,13 +327,16 @@
 		checkAllText: 'Check all',
 		unCheckAllText: 'Uncheck all',
 		noneSelected: 'Select options',
-		selectedList: false,
+		selectedList: false, /* to enable, enter a number (gt 0) denoting the maximum number of list items to display before switching to selectedText  */
 		selectedText: '# selected',
 		position: 'bottom', /* top|middle|bottom */
 		shadow: false,
 		fadeSpeed: 200,
-		onCheck: function(){},
-		onOpen: function(){}
+		onCheck: function(){}, /* when an individual checkbox is clicked */
+		onOpen: function(){}, /* when the select menu is opened */
+		onCheckAll: function(){}, /* when the check all link is clicked */
+		onUncheckAll: function(){}, /* when the uncheck all link is clicked */
+		onOptgroupToggle: function(){} /* when the optgroup heading is clicked */
 	};
 
 })(jQuery);
