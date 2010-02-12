@@ -40,7 +40,7 @@
 		// build options
 		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
 		$select.find('option').each(function(){
-			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup');
+			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup'), isDisabled = $this.is(':disabled'), labelClasses = ['ui-corner-all'], liClasses = [];
 			
 			if(hasOptGroup){
 				var label = $parent.attr('label');
@@ -52,10 +52,18 @@
 			};
 			
 			if(len > 0){
-				html.push(hasOptGroup ? '<li class="multiSelect-optgroup">' : '<li>');
-				html.push('<label class="ui-corner-all"><input type="checkbox" name="' + $select.attr('name') + '" value="' + value + '"');
+				if(isDisabled){
+					labelClasses.push('ui-state-disabled');
+					liClasses.push('ui-multiselect-disabled');
+				};
+				
+				html.push('<li class="' + liClasses.join(' ') + '">');
+				html.push('<label class="' + labelClasses.join(' ') + '"><input type="checkbox" name="' + $select.attr('name') + '" value="' + value + '"');
 				if($this.is(':selected')){
 					html.push(' checked="checked"');
+				};
+				if($this.is(':disabled')){
+					html.push(' disabled="disabled"');
 				};
 				html.push(' />' + $this.html() + '</label></li>');
 			};
@@ -66,7 +74,7 @@
 		$select  = $select.after( html.join('') ).next('a.ui-multiselect');
 		$options = $select.next('div.ui-multiselect-options');
 		$header  = $options.find('div.ui-multiselect-header');
-		$labels  = $options.find('label');
+		$labels  = $options.find('label').not('.ui-state-disabled');
 		
 		// calculate widths
 		var iconWidth = $select.find('span.ui-icon').outerWidth(), inputWidth = $original.outerWidth(), totalWidth = inputWidth+iconWidth;
@@ -185,10 +193,18 @@
 				o.onOpen.call($options[0]);
 			},
 			'traverse': function(e, start, keycode){
-				var $start = $(start), moveToLast = (keycode === 38 || keycode === 37) ? true : false; 
+				var $start = $(start), 
+				    moveToLast = (keycode === 38 || keycode === 37) ? true : false,
+				    direction = moveToLast ? 'prev' : 'next',
+				    $next = $start.parent()[direction](); // move to the next label
 				
-				// attempt to move to the next label
-				var $next = $start.parent()[ moveToLast ? 'prev' : 'next' ]('li').find('label').trigger('mouseenter');
+				// if the next label is disabled, skip to the next active one
+				if($next.hasClass('ui-multiselect-disabled')){
+					$next = $next[direction+'Until'](":not('li.ui-multiselect-disabled')")[direction]();
+				};
+				
+				// trigger the mouse event
+				$next.find('label').trigger('mouseenter');
 				
 				// if at the first/last element
 				if(!$next.length){
@@ -203,7 +219,7 @@
 			},
 			'toggleChecked': function(e, flag, group){
 				var $inputs = (group && group.length) ? group : $labels.find('input');
-				$inputs.attr('checked', (flag ? 'checked' : '')); 
+				$inputs.not(':disabled').attr('checked', (flag ? 'checked' : '')); 
 				updateSelected();
 			}
 		})
@@ -262,13 +278,13 @@
 			
 			// stop this click from bubbling up to the label
 			e.stopPropagation();
-			
+
 			// if the click originated from the label, stop the click event and manually toggle the checked state
 			if(label){
 				e.preventDefault();
 				$this.attr('checked', $this.is(':checked') ? '' : 'checked');
 			};
-			
+		
 			o.onCheck.call( $this[0] );
 			updateSelected();
 		});
