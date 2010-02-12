@@ -151,7 +151,7 @@
 				};
 			},
 			'open': function(e){
-				var offset = $select.position(), $container = $options.find('ul:eq(1)'), timer, listHeight = 0, top, width;
+				var offset = $select.position(), $container = $options.find('ul:last'), timer, listHeight = 0, top, width;
 				
 				// calling select is active
 				$select.addClass('ui-state-active');
@@ -208,7 +208,7 @@
 				
 				// if at the first/last element
 				if(!$next.length){
-					var $container = $options.find("ul:eq(1)");
+					var $container = $options.find("ul:last");
 					
 					// move to the first/last
 					$options.find('label')[ moveToLast ? 'last' : 'first' ]().trigger('mouseover');
