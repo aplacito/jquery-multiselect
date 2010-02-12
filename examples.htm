@@ -28,6 +28,10 @@ select {  }
 
 <script type="text/javascript">
 $(function(){
+	
+	// notice how you can overwrite the defaults for instances
+	$.fn.multiSelect.defaults.minWidth = 205;
+	
 	$('#themeswitcher').themeswitcher({ loadTheme: 'lightness' });
 	 
 	// default options
@@ -70,7 +74,8 @@ $(function(){
 	$("#example7").multiSelect({ 
 		checkAllText: 'Select All',
 		unCheckAllText: 'Deselect All',
-		selectedText: '# of # selected'
+		selectedText: '# of # selected',
+		minWidth: 225
 	});
 	
 	$("#examples").submit(function(e){
@@ -105,7 +110,7 @@ $(function(){
 	<form action="" method="post" id="examples">
 	<h2>Example 1: Basic</h2>
 	<p>
-		<select name="example1" class="multiselect" multiple="multiple" size="5" style="width:200px">
+		<select name="example1" class="multiselect" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
@@ -217,6 +222,33 @@ $(function(){
 		<option value="option5">Option 5</option>
 		<option value="option6">Option 6</option>
 		<option value="option7">Option 7</option>
+		</select>
+	</p>
+	
+	<h2>Example 8: Multiple instances in-line</h2>
+	<p>
+		<select name="example8" class="multiselect" multiple="multiple" size="5">
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		</select>
+
+		<select name="example9" class="multiselect" multiple="multiple" size="5">
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		</select>
+
+		<select name="example9" class="multiselect" multiple="multiple" size="5">
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
 		</select>
 	</p>
 	<br />

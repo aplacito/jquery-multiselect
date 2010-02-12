@@ -13,7 +13,7 @@
 	
 	$.fn.extend({
 		multiSelect: function(opts){
-			opts = $.extend({}, MultiSelect.defaults, opts);
+			opts = $.extend({}, $.fn.multiSelect.defaults, opts);
 
 			return this.each(function(){
 				new MultiSelect(this, opts);
@@ -88,7 +88,7 @@
 
 		// build header links
 		if(o.showHeader){
-			$header.find("a").click(function(e){
+			$header.find('a').click(function(e){
 				var $target = $(e.target);
 			
 				// close link
@@ -109,11 +109,18 @@
 		// the select box events
 		$select.bind({
 			click: function(){
-				$options.trigger( $options.is(':hidden') ? 'open' : 'close' );
+				$options.trigger('toggle');
 			},
 			keypress: function(e){
-				if(e.keyCode === 27){ // esc
-					$options.trigger('close');
+				switch(e.keyCode){
+					case 27: // esc
+					case 38: // up
+						$options.trigger('close');
+						break;
+					case 40: // down
+					case 0: // space
+						$options.trigger('toggle');
+						break;
 				};
 			},
 			mouseenter: function(){
@@ -172,7 +179,7 @@
 				width = $select.width()-parseInt($options.css('padding-left'))-parseInt($options.css('padding-right'));
 				
 				// select the first option
-				$labels.filter('label:first').trigger('mouseenter');
+				$labels.filter('label:first').trigger('mouseenter').trigger('focus');
 				
 				// show the options div + position it
 				$options.css({ 
@@ -192,20 +199,16 @@
 				
 				o.onOpen.call($options[0]);
 			},
+			'toggle': function(){
+				$options.trigger( $(this).is(':hidden') ? 'open' : 'close' );
+			},
 			'traverse': function(e, start, keycode){
 				var $start = $(start), 
-				    moveToLast = (keycode === 38 || keycode === 37) ? true : false,
-				    direction = moveToLast ? 'prev' : 'next',
-				    $next = $start.parent()[direction](); // move to the next label
-				
-				// if the next label is disabled, skip to the next active one
-				if($next.hasClass('ui-multiselect-disabled')){
-					$next = $next[direction+'Until'](":not('li.ui-multiselect-disabled')")[direction]();
-				};
-				
-				// trigger the mouse event
-				$next.find('label').trigger('mouseenter');
-				
+					moveToLast = (keycode === 38 || keycode === 37) ? true : false,
+					
+					// select the first li that isn't an optgroup label / disabled
+					$next = $start.parent()[moveToLast ? 'prevAll' : 'nextAll']('li:not(.ui-multiselect-disabled, .ui-multiselect-optgroup-label)')[ moveToLast ? 'last' : 'first']();
+
 				// if at the first/last element
 				if(!$next.length){
 					var $container = $options.find("ul:last");
@@ -215,6 +218,9 @@
 					
 					// set scroll position
 					$container.scrollTop( moveToLast ? $container.height() : 0 );
+					
+				} else {
+					$next.find('label').trigger('mouseenter');
 				};
 			},
 			'toggleChecked': function(e, flag, group){
@@ -248,11 +254,6 @@
 			},
 			keyup: function(e){
 				switch(e.keyCode){
-					case 9: // tab
-						$options.trigger('close');
-						$select.next(':input').focus();
-						break;
-
 					case 27: // esc
 						$options.trigger('close');
 						break;
@@ -336,10 +337,10 @@
 	});
 	
 	// default options
-	MultiSelect.defaults = {
+	$.fn.multiSelect.defaults = {
 		showHeader: true,
 		maxHeight: 175, /* max height of the checkbox container (scroll) in pixels */
-		minWidth: 200, /* min width of the entire widget in pixels. setting to 'auto' will disable */
+		minWidth: 205, /* min width of the entire widget in pixels. setting to 'auto' will disable */
 		checkAllText: 'Check all',
 		unCheckAllText: 'Uncheck all',
 		noneSelected: 'Select options',
