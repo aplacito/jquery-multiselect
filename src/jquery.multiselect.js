@@ -1,5 +1,5 @@
 /*
- * jQuery MultiSelect Plugin 0.3
+ * jQuery MultiSelect Plugin 0.4
  * Copyright (c) 2010 Eric Hynds
  *
  * http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/
@@ -24,7 +24,7 @@
 	var MultiSelect = function(select,o){
 		var $select = $original = $(select), $options, $labels, html = [], optgroups = [];
 		
-		html.push('<a class="ui-multiselect ui-widget ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="" class="ui-state-default"/><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
+		html.push('<a class="ui-multiselect ui-widget ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="'+o.noneSelected+'" class="ui-state-default" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
 		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">');
 	
 		if(o.showHeader){
@@ -40,7 +40,7 @@
 		// build options
 		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
 		$select.find('option').each(function(){
-			var $this = $(this), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup'), isDisabled = $this.is(':disabled'), labelClasses = ['ui-corner-all'], liClasses = [];
+			var $this = $(this), title = $this.html(), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup'), isDisabled = $this.is(':disabled'), labelClasses = ['ui-corner-all'], liClasses = [];
 			
 			if(hasOptGroup){
 				var label = $parent.attr('label');
@@ -58,14 +58,14 @@
 				};
 				
 				html.push('<li class="' + liClasses.join(' ') + '">');
-				html.push('<label class="' + labelClasses.join(' ') + '"><input type="checkbox" name="' + $select.attr('name') + '" value="' + value + '"');
+				html.push('<label class="' + labelClasses.join(' ') + '"><input type="checkbox" name="' + $select.attr('name') + '" value="' + value + '" title="' + title + '"');
 				if($this.is(':selected')){
 					html.push(' checked="checked"');
 				};
-				if($this.is(':disabled')){
+				if(isDisabled){
 					html.push(' disabled="disabled"');
 				};
-				html.push(' />' + $this.html() + '</label></li>');
+				html.push(' />' + title + '</label></li>');
 			};
 		});
 		html.push('</ul></div>');
@@ -84,7 +84,7 @@
 		};
 		
 		// set widths
-		$select.width(totalWidth + 'px').find("input").width(inputWidth + 'px');
+		$select.width(totalWidth + 'px').find('input').width(inputWidth + 'px');
 
 		// build header links
 		if(o.showHeader){
@@ -307,7 +307,7 @@
 			    numChecked = $checked.length;
 			
 			if(numChecked === 0){
-				$input.val( o.noneSelected );
+				value = o.noneSelected;
 			} else {
 			
 				// if selectedList is enabled, and the number of checked items is less/equal to the max specified
@@ -319,12 +319,10 @@
 				} else {
 					value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
 				};
-				
-				$input.val( value ).attr('title', value);
 			};
+			
+			$input.val( value ).attr('title', value);
 		};
-
-		return $options;
 	};
 	
 	// close each select when clicking on any other element/anywhere else on the page
@@ -340,7 +338,7 @@
 	$.fn.multiSelect.defaults = {
 		showHeader: true,
 		maxHeight: 175, /* max height of the checkbox container (scroll) in pixels */
-		minWidth: 205, /* min width of the entire widget in pixels. setting to 'auto' will disable */
+		minWidth: 200, /* min width of the entire widget in pixels. setting to 'auto' will disable */
 		checkAllText: 'Check all',
 		unCheckAllText: 'Uncheck all',
 		noneSelected: 'Select options',

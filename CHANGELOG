@@ -19,14 +19,18 @@ Version 0.3 - 02/04/2010
 - Modified: standardized using single quotes.
 - Modified: refactored removeAttr("checked") to attr("checked", "").
 
-Version 0.4 - Unreleased!
+Version 0.4 - 02/15/2010
 ==============================================
 - Added: the down arrow & space toggles open/close, and up arrow closes when focused on the input.
 - Added: support for disabled="disabled" options.
+- Added: the checkbox inputs now have the "title" attribute.
 - Fixed: traversing the menu now skips over disabled options & optgroup headers.
 - Fixed: removed the call to focus() when traversing the menu if there isn't a next/prev li.
 - Fixed: setting the showHeader option to false no longer breaks the scrollbar or keyboard traversal scrollTop setting.
 - Fixed: added relative positioning & z-index to .ui-multiselect-options (thanks David).
+- Fixed: the main input's value is no longer cleared when a form's reset button is clicked.
+- Fixed: the "title" attribute of the main input updates correctly when the last checkbox is unchecked.
 - Modified: added a custom "toggleChecked" event to $options.
 - Modified: the minWidth parameter is now 200 by default (from "auto").
 - Modified: exposed default options by moving them to $.fn.multiSelect.defaults.
+- Modified: updateSelected() no longer returns $options.
