@@ -1,5 +1,5 @@
 /*
- * jQuery MultiSelect Plugin 0.4
+ * jQuery MultiSelect Plugin 0.4.1
  * Copyright (c) 2010 Eric Hynds
  *
  * http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/
@@ -24,7 +24,7 @@
 	var MultiSelect = function(select,o){
 		var $select = $original = $(select), $options, $labels, html = [], optgroups = [];
 		
-		html.push('<a class="ui-multiselect ui-widget ui-state-default ui-corner-all"><input readonly="readonly" type="text" value="'+o.noneSelected+'" class="ui-state-default" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
+		html.push('<a class="ui-multiselect ui-widget ui-state-default ui-corner-all"><input readonly="readonly" type="text" class="ui-state-default" value="'+o.noneSelected+'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
 		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">');
 	
 		if(o.showHeader){
@@ -85,7 +85,7 @@
 		
 		// set widths
 		$select.width(totalWidth + 'px').find('input').width(inputWidth + 'px');
-
+		
 		// build header links
 		if(o.showHeader){
 			$header.find('a').click(function(e){
@@ -296,15 +296,14 @@
 		// remove the original input element
 		$original.remove();
 
-		// update the number of selected elements when the page initally loads
-		updateSelected();
+		// update the number of selected elements when the page initially loads, and use that as the defaultValue.  necessary for form resets when options are pre-selected.
+		$select.find("input")[0].defaultValue = updateSelected();
 		
 		function updateSelected(){
-			var $input = $select.find('input'),
-			    $inputs = $labels.find('input'),
-			    $checked = $inputs.filter(':checked'),
-			    value = '',
-			    numChecked = $checked.length;
+			var $inputs = $labels.find('input'),
+				$checked = $inputs.filter(':checked'),
+				value = '',
+				numChecked = $checked.length;
 			
 			if(numChecked === 0){
 				value = o.noneSelected;
@@ -321,7 +320,8 @@
 				};
 			};
 			
-			$input.val( value ).attr('title', value);
+			$select.find('input').val(value).attr('title', value);
+			return value;
 		};
 	};
 	

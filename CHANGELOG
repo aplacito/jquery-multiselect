@@ -33,4 +33,8 @@ Version 0.4 - 02/15/2010
 - Modified: added a custom "toggleChecked" event to $options.
 - Modified: the minWidth parameter is now 200 by default (from "auto").
 - Modified: exposed default options by moving them to $.fn.multiSelect.defaults.
-- Modified: updateSelected() no longer returns $options.
+
+Version 0.4.1 - 02/15/2010
+==============================================
+- Fixed: graceful handling of form resets with pre-selected options, cross browser.
+
