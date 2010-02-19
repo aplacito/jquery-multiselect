@@ -11,15 +11,13 @@
 */
 (function($){
 	
-	$.fn.extend({
-		multiSelect: function(opts){
-			opts = $.extend({}, $.fn.multiSelect.defaults, opts);
+	$.fn.multiSelect = function(opts){
+		opts = $.extend({}, $.fn.multiSelect.defaults, opts);
 
-			return this.each(function(){
-				new MultiSelect(this, opts);
-			});
-		}
-	});
+		return this.each(function(){
+			new MultiSelect(this, opts);
+		});
+	};
 	
 	var MultiSelect = function(select,o){
 		var $select = $original = $(select), $options, $labels, html = [], optgroups = [];
@@ -106,6 +104,29 @@
 			});
 		};
 		
+		var updateSelected = function(){
+			var $inputs = $labels.find('input'),
+				$checked = $inputs.filter(':checked'),
+				value = '',
+				numChecked = $checked.length;
+			
+			if(numChecked === 0){
+				value = o.noneSelected;
+			} else {
+				// if selectedList is enabled, and the number of checked items is less/equal to the max specified
+				if(o.selectedList && $checked.length <= o.selectedList){
+					value = $checked.map(function(){
+						return this.title;
+					}).get().join(', ');
+				} else {
+					value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
+				};
+			};
+			
+			$select.find('input').val(value).attr('title', value);
+			return value;
+		};
+		
 		// the select box events
 		$select.bind({
 			click: function(){
@@ -158,7 +179,7 @@
 				};
 			},
 			'open': function(e){
-				var offset = $select.position(), $container = $options.find('ul:last'), timer, listHeight = 0, top, width;
+				var offset = $select.position(), $container = $options.find('ul:last'), top, width;
 				
 				// calling select is active
 				$select.addClass('ui-state-active');
@@ -286,12 +307,14 @@
 				$this.attr('checked', $this.is(':checked') ? '' : 'checked');
 			};
 		
-			o.onCheck.call( $this[0] );
+			o.onCheck.call(this);
 			updateSelected();
 		});
-		// apply bgiframe if available
+
+		// apply bgiframe if available
 		if($.fn.bgiframe){
-			$options.bgiframe();		};
+			$options.bgiframe();
+		};
 		
 		// remove the original input element
 		$original.remove();
@@ -299,34 +322,10 @@
 		// update the number of selected elements when the page initially loads, and use that as the defaultValue.  necessary for form resets when options are pre-selected.
 		$select.find("input")[0].defaultValue = updateSelected();
 		
-		function updateSelected(){
-			var $inputs = $labels.find('input'),
-				$checked = $inputs.filter(':checked'),
-				value = '',
-				numChecked = $checked.length;
-			
-			if(numChecked === 0){
-				value = o.noneSelected;
-			} else {
-			
-				// if selectedList is enabled, and the number of checked items is less/equal to the max specified
-				if(o.selectedList && $checked.length <= o.selectedList){
-					$checked.each(function(){
-						var text = $(this).parent().text();
-						value = (value.length) ? (value += ', ' + text) : text;
-					});
-				} else {
-					value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
-				};
-			};
-			
-			$select.find('input').val(value).attr('title', value);
-			return value;
-		};
 	};
 	
 	// close each select when clicking on any other element/anywhere else on the page
-	$(document).bind("click", function(e){
+	$(document).bind('click', function(e){
 		var $target = $(e.target);
 
 		if(!$target.closest('div.ui-multiselect-options').length && !$target.parent().hasClass('ui-multiselect')){
@@ -355,3 +354,4 @@
 	};
 
 })(jQuery);
+
