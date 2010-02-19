@@ -68,13 +68,25 @@ $(function(){
 	});
 	
 	// Options displayed in comma-separated list
-	$("#example6").multiSelect({ selectedList:5, minWidth:400 });
+	$("#example6").multiSelect({ 
+		minWidth:400,
+		selectedText: function(numChecked, numTotal, checkedItems){
+		
+			// if there are 5 or less items checked, show them in a list.
+			// otherwise, just show the number checked
+			return (numChecked <= 5)
+				? checkedItems.join(', ')
+				: numChecked + ' checked';
+		}
+	});
 	
 	// 'Check All' text changed
 	$("#example7").multiSelect({ 
 		checkAllText: 'Select All',
 		unCheckAllText: 'Deselect All',
-		selectedText: '# of # selected',
+		selectedText: function(numChecked, numTotal, checkedItems){
+			return numChecked + ' of ' + numTotal + ' checked';
+		},
 		minWidth: 225
 	});
 	
@@ -195,9 +207,10 @@ $(function(){
 		</select>
 	</p>
 	
-	<h2>Example 6: Demonstrating the <code>selectedList</code> and <code>minWidth</code> parameters</h2>
-	<p>The <code>selectedList</code> parameter is set to 5.  After 5 checkboxes have been checked, <code>selectedList</code>
-	is disabled and yields to the <code>selectedText</code> parameter.  <code>minWidth</code> is set to 400 (pixels).</p>
+	<h2>Example 6: Displaying options in a list</h2>
+	<p>A function is passed to the <code>selectedText</code> parameter which returns a list of the items selected,
+	as long as 5 or less checkboxes are checked.  Once 5 or more checkboxes have been checked, <code>selectedText</code>
+	returns the number checked.  <code>minWidth</code> is set to 400 (pixels).</p>
 	<p>
 		<select name="example6" id="example6" multiple="multiple" size="5">
 		<option value=""></option>

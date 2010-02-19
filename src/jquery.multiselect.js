@@ -114,13 +114,14 @@
 				value = o.noneSelected;
 			} else {
 				// if selectedList is enabled, and the number of checked items is less/equal to the max specified
-				if(o.selectedList && $checked.length <= o.selectedList){
-					value = $checked.map(function(){
-						return this.title;
-					}).get().join(', ');
-				} else {
-					value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
-				};
+				// if(o.selectedList && $checked.length <= o.selectedList){
+				var checkedItems = $checked.map(function(){
+					return this.title;
+				}).get();
+				
+				value = $.isFunction(o.selectedText)
+					? o.selectedText.call(this, numChecked, $inputs.length, checkedItems)
+					: o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
 			};
 			
 			$select.find('input').val(value).attr('title', value);
@@ -341,7 +342,6 @@
 		checkAllText: 'Check all',
 		unCheckAllText: 'Uncheck all',
 		noneSelected: 'Select options',
-		selectedList: false, /* to enable, enter a number (gt 0) denoting the maximum number of list items to display before switching to selectedText  */
 		selectedText: '# selected',
 		position: 'bottom', /* top|middle|bottom */
 		shadow: false,
