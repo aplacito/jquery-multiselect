@@ -87,15 +87,15 @@
 		// build header links
 		if(o.showHeader){
 			$header.find('a').click(function(e){
-				var $target = $(e.target);
+				var $this = $(this);
 			
 				// close link
-				if($target.hasClass('ui-multiselect-close')){
+				if($this.hasClass('ui-multiselect-close')){
 					$options.trigger('close');
 			
 				// check all / uncheck all
 				} else {
-					var checkAll = $target.hasClass('ui-multiselect-all');
+					var checkAll = $this.hasClass('ui-multiselect-all');
 					$options.trigger('toggleChecked', [(checkAll ? true : false)]);
 					o[ checkAll ? 'onCheckAll' : 'onUncheckAll']['call'](this);
 				};
@@ -321,7 +321,7 @@
 		$original.remove();
 
 		// update the number of selected elements when the page initially loads, and use that as the defaultValue.  necessary for form resets when options are pre-selected.
-		$select.find("input")[0].defaultValue = updateSelected();
+		$select.find('input')[0].defaultValue = updateSelected();
 		
 	};
 	
