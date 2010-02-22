@@ -43,7 +43,7 @@
 			if(hasOptGroup){
 				var label = $parent.attr('label');
 				
-				if($.inArray(label, optgroups) === -1){
+				if($.inArray(label,optgroups) === -1){
 					html.push('<li class="ui-multiselect-optgroup-label"><a href="#">' + label + '</a></li>');
 					optgroups.push(label);
 				};
@@ -82,7 +82,7 @@
 		};
 		
 		// set widths
-		$select.width(totalWidth + 'px').find('input').width(inputWidth + 'px');
+		$select.width(totalWidth).find('input').width(inputWidth);
 		
 		// build header links
 		if(o.showHeader){
@@ -113,14 +113,8 @@
 			if(numChecked === 0){
 				value = o.noneSelected;
 			} else {
-				// if selectedList is enabled, and the number of checked items is less/equal to the max specified
-				// if(o.selectedList && $checked.length <= o.selectedList){
-				var checkedItems = $checked.map(function(){
-					return this.title;
-				}).get();
-				
 				value = $.isFunction(o.selectedText)
-					? o.selectedText.call(this, numChecked, $inputs.length, checkedItems)
+					? o.selectedText.call(this, numChecked, $inputs.length, $checked.get())
 					: o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
 			};
 			
@@ -216,7 +210,7 @@
 				
 				// set the height of the checkbox container
 				if(o.maxHeight){
-					$container.css('height', o.maxHeight );
+					$container.css('height', o.maxHeight);
 				};
 				
 				o.onOpen.call($options[0]);
@@ -254,12 +248,10 @@
 		.find('li.ui-multiselect-optgroup-label a')
 		.click(function(e){
 			// optgroup label toggle support
-			var $checkboxes = $(this).parent().nextUntil('li.ui-multiselect-optgroup-label').find('input'),
-				total = $checkboxes.length,
-				checked = $checkboxes.filter(':checked').length;
+			var $checkboxes = $(this).parent().nextUntil('li.ui-multiselect-optgroup-label').find('input');
 			
-			$options.trigger('toggleChecked', [ (checked === total) ? false : true, $checkboxes]);
-			o.onOptgroupToggle.call(this, $checkboxes.get() );
+			$options.trigger('toggleChecked', [ ($checkboxes.filter(':checked').length === $checkboxes.length) ? false : true, $checkboxes]);
+			o.onOptgroupToggle.call(this, $checkboxes.get());
 			e.preventDefault();
 		});
 		
@@ -354,4 +346,3 @@
 	};
 
 })(jQuery);
-

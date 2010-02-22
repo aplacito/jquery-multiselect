@@ -2,7 +2,7 @@
 .ui-multiselect input { float:left; padding:3px 0 3px 6px; margin:0; border:none; cursor:default; background:transparent }
 .ui-multiselect span { float:right; margin-top:-18px; }
 
-.ui-multiselect-header { margin-bottom:3px; padding:3px 0 3px 4px }
+.ui-multiselect-header { margin-bottom:3px; padding:3px 0 3px 6px }
 .ui-multiselect-header ul { font-size:0.9em }
 .ui-multiselect-header ul li { float:left; padding:0 10px 0 0 }
 .ui-multiselect-header a { text-decoration:none }

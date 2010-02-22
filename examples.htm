@@ -42,7 +42,7 @@ $(function(){
 	
 	// callbacks
 	var $callback = $("#callback");
-	$("#example3").multiSelect({
+	$("#example4").multiSelect({
 		onCheck: function(){
 			$callback.html(this.value + ' ' + (this.checked ? 'checked' : 'unchecked') );
 		},
@@ -73,10 +73,17 @@ $(function(){
 		selectedText: function(numChecked, numTotal, checkedItems){
 		
 			// if there are 5 or less items checked, show them in a list.
+			if(numChecked <= 5){
+			
+				return $(checkedItems).map(function(){
+					return this.title;
+				}).get().join(', ');
+				
+
 			// otherwise, just show the number checked
-			return (numChecked <= 5)
-				? checkedItems.join(', ')
-				: numChecked + ' checked';
+			} else {
+				return numChecked + ' checked';
+			}
 		}
 	});
 	
@@ -157,10 +164,10 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 3: onOpen, onCheck, onCheckAll, onUncheckAll, and onOptgroupToggle callbacks</h2>
+	<h2>Example 3: Optgroup support</h2>
+	<p>Click on an optgroup's heading to toggle the checked state of the entire group.</p>
 	<p>
-		<p id="callback">Callback target</p>
-		<select name="example3" id="example3" multiple="multiple" size="5">
+		<select name="example3" class="multiselect" multiple="multiple" size="5">
 		<optgroup label="Group One">
 			<option value="option1">Option 1</option>
 			<option value="option2">Option 2</option>
@@ -175,10 +182,11 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 4: Optgroup support</h2>
-	<p>Click on an optgroup's heading to toggle the checked state of the entire group.</p>
+
+	<h2>Example 4: onOpen, onCheck, onCheckAll, onUncheckAll, and onOptgroupToggle callbacks</h2>
 	<p>
-		<select name="example4" class="multiselect" multiple="multiple" size="5">
+		<p id="callback">Callback target</p>
+		<select name="example4" id="example4" multiple="multiple" size="5">
 		<optgroup label="Group One">
 			<option value="option1">Option 1</option>
 			<option value="option2">Option 2</option>
@@ -192,7 +200,6 @@ $(function(){
 		</optgroup>
 		</select>
 	</p>
-	
 
 	<h2>Example 5: Positioning set to &quot;middle&quot;; no header with a CSS drop shadow</h2>
 	<p>
