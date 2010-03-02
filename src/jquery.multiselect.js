@@ -178,20 +178,22 @@
 					$options.fadeOut(o.fadeSpeed);
 				};
 			},
-			'open': function(e){
+			'open': function(e, closeOthers){
 				
 				// bail if this widget is disabled
 				if($select.hasClass('ui-state-disabled')){
 					return;
 				}
 				
-				var offset = $select.position(), $container = $options.find('ul:last'), top, width;
+				var offset = $select.offset(), $container = $options.find('ul:last'), top, width;
 				
 				// calling select is active
 				$select.addClass('ui-state-active');
 				
 				// hide all other options
-				$options.trigger('close', [true]);
+				if(closeOthers || typeof closeOthers === 'undefined'){
+					$options.trigger('close', [true]);
+				};
 				
 				// calculate positioning
 				if(o.position === 'middle'){
@@ -322,6 +324,10 @@
 			$options.bgiframe();
 		};
 		
+		if(o.state === 'open'){
+			$options.trigger('open', [false]);
+		}
+		
 		// update the number of selected elements when the page initially loads, and use that as the defaultValue.  necessary for form resets when options are pre-selected.
 		$select.find('input')[0].defaultValue = updateSelected();
 	};
@@ -348,6 +354,7 @@
 		shadow: false,
 		fadeSpeed: 200,
 		disabled: false,
+		state: 'closed',
 		onCheck: function(){}, /* when an individual checkbox is clicked */
 		onOpen: function(){}, /* when the select menu is opened */
 		onCheckAll: function(){}, /* when the check all link is clicked */
