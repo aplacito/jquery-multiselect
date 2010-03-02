@@ -42,12 +42,19 @@ Version 0.5pre (under development)
 ==============================================
 - Added: support for disabled selects (entire widget).
 - Added: the widget now inherits the original ID of the select box.
+- Added: "state" parameter added to configure the default open or closed state.
 - Modified: selectedText can now take a function with 3 args: number of inputs checked, number of inputs total, an array of the checked inputs.
 - Modified: slight refactoring (moved updateSelected et al.).
-- Modified: noneSelected renamed to noneSelectedText.
+- Modified: noneSelected parameter renamed to noneSelectedText.
+- Modified: positioning now determined by offset() instead of position().
+- Modified: switched to "this" from "$(this)" where possible.
 - Fixed: No need to pass the "px" unit to width().
 - Fixed: The icons in the "check all" and "uncheck all" header links were not toggling correctly.
 - Fixed: removed some unused vars.
 - Fixed: better positioning of the header links.
+- Fixed: border issue on the text input when inside a div.ui-widget.content.
+- Fixed: options menu now has the ui-corner-all class.  Previously all corners except top left were rounded... for some reason.
 - Removed: selectedList option.  Use selectedText instead.
+
+
 
