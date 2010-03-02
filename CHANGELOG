@@ -40,7 +40,9 @@ Version 0.4.1 - 02/15/2010
 
 Version 0.5pre (under development)
 ==============================================
-- Modifed: selectedText can now take a function with 3 args: number of inputs checked, number of inputs total, an array of the checked inputs.
+- Added: support for disabled selects (entire widget).
+- Added: the widget now inherits the original ID of the select box.
+- Modified: selectedText can now take a function with 3 args: number of inputs checked, number of inputs total, an array of the checked inputs.
 - Modified: slight refactoring (moved updateSelected et al.).
 - Modified: noneSelected renamed to noneSelectedText.
 - Fixed: No need to pass the "px" unit to width().

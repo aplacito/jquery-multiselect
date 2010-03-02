@@ -22,7 +22,8 @@
 	var MultiSelect = function(select,o){
 		var $select = $original = $(select), $options, $labels, html = [], optgroups = [];
 		
-		html.push('<a class="ui-multiselect ui-widget ui-state-default ui-corner-all"><input readonly="readonly" type="text" class="ui-state-default" value="'+o.noneSelectedText+'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
+		html.push('<a id="'+ select.id +'" class="ui-multiselect ui-widget ui-state-default ui-corner-all' + ($select.is(':disabled') || o.disabled ? ' ui-state-disabled' : '') + '">');
+		html.push('<input readonly="readonly" type="text" class="ui-state-default" value="'+ o.noneSelectedText +'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
 		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">');
 	
 		if(o.showHeader){
@@ -140,13 +141,17 @@
 				};
 			},
 			mouseenter: function(){
-				$(this).addClass('ui-state-hover');
+				if(!$select.hasClass('ui-state-disabled')){
+					$(this).addClass('ui-state-hover');
+				}
 			},
 			mouseleave: function(){
 				$(this).removeClass('ui-state-hover');
 			},
 			focus: function(){
-				$(this).addClass('ui-state-focus');
+				if(!$select.hasClass('ui-state-disabled')){
+					$(this).addClass('ui-state-focus');
+				}
 			},
 			blur: function(){
 				$(this).removeClass('ui-state-focus');
@@ -174,6 +179,12 @@
 				};
 			},
 			'open': function(e){
+				
+				// bail if this widget is disabled
+				if($select.hasClass('ui-state-disabled')){
+					return;
+				}
+				
 				var offset = $select.position(), $container = $options.find('ul:last'), top, width;
 				
 				// calling select is active
@@ -324,7 +335,7 @@
 			$('div.ui-multiselect-options').trigger('close', [true]);
 		};
 	});
-	
+
 	// default options
 	$.fn.multiSelect.defaults = {
 		showHeader: true,
@@ -337,6 +348,7 @@
 		position: 'bottom', /* top|middle|bottom */
 		shadow: false,
 		fadeSpeed: 200,
+		disabled: false,
 		onCheck: function(){}, /* when an individual checkbox is clicked */
 		onOpen: function(){}, /* when the select menu is opened */
 		onCheckAll: function(){}, /* when the check all link is clicked */
