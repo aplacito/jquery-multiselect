@@ -42,6 +42,7 @@ Version 0.5pre (under development)
 ==============================================
 - Modifed: selectedText can now take a function with 3 args: number of inputs checked, number of inputs total, an array of the checked inputs.
 - Modified: slight refactoring (moved updateSelected et al.).
+- Modified: noneSelected renamed to noneSelectedText.
 - Fixed: No need to pass the "px" unit to width().
 - Fixed: The icons in the "check all" and "uncheck all" header links were not toggling correctly.
 - Fixed: removed some unused vars.

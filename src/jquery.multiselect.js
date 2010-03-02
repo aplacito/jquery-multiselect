@@ -22,7 +22,7 @@
 	var MultiSelect = function(select,o){
 		var $select = $original = $(select), $options, $labels, html = [], optgroups = [];
 		
-		html.push('<a class="ui-multiselect ui-widget ui-state-default ui-corner-all"><input readonly="readonly" type="text" class="ui-state-default" value="'+o.noneSelected+'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
+		html.push('<a class="ui-multiselect ui-widget ui-state-default ui-corner-all"><input readonly="readonly" type="text" class="ui-state-default" value="'+o.noneSelectedText+'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
 		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">');
 	
 		if(o.showHeader){
@@ -38,7 +38,7 @@
 		// build options
 		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
 		$select.find('option').each(function(){
-			var $this = $(this), title = $this.html(), value = $this.val(), len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup'), isDisabled = $this.is(':disabled'), labelClasses = ['ui-corner-all'], liClasses = [];
+			var $this = $(this), title = $this.html(), value = this.value, len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup'), isDisabled = $this.is(':disabled'), labelClasses = ['ui-corner-all'], liClasses = [];
 			
 			if(hasOptGroup){
 				var label = $parent.attr('label');
@@ -67,8 +67,8 @@
 			};
 		});
 		html.push('</ul></div>');
-		
-		// cache queries
+
+		// append the new control to the DOM; cache queries
 		$select  = $select.after( html.join('') ).next('a.ui-multiselect');
 		$options = $select.next('div.ui-multiselect-options');
 		$header  = $options.find('div.ui-multiselect-header');
@@ -111,7 +111,7 @@
 				numChecked = $checked.length;
 			
 			if(numChecked === 0){
-				value = o.noneSelected;
+				value = o.noneSelectedText;
 			} else {
 				value = $.isFunction(o.selectedText)
 					? o.selectedText.call(this, numChecked, $inputs.length, $checked.get())
@@ -304,17 +304,16 @@
 			updateSelected();
 		});
 
+		// remove the original input element
+		$original.remove();
+		
 		// apply bgiframe if available
 		if($.fn.bgiframe){
 			$options.bgiframe();
 		};
 		
-		// remove the original input element
-		$original.remove();
-
 		// update the number of selected elements when the page initially loads, and use that as the defaultValue.  necessary for form resets when options are pre-selected.
 		$select.find('input')[0].defaultValue = updateSelected();
-		
 	};
 	
 	// close each select when clicking on any other element/anywhere else on the page
@@ -333,7 +332,7 @@
 		minWidth: 200, /* min width of the entire widget in pixels. setting to 'auto' will disable */
 		checkAllText: 'Check all',
 		unCheckAllText: 'Uncheck all',
-		noneSelected: 'Select options',
+		noneSelectedText: 'Select options',
 		selectedText: '# selected',
 		position: 'bottom', /* top|middle|bottom */
 		shadow: false,
