@@ -299,7 +299,6 @@
 		})
 		.find('input')
 		.bind('click', function(e, label){
-			var $this = $(this);
 			label = label || false;
 			
 			// stop this click from bubbling up to the label
