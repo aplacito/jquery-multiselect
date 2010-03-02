@@ -24,7 +24,7 @@
 		
 		html.push('<a id="'+ select.id +'" class="ui-multiselect ui-widget ui-state-default ui-corner-all' + ($select.is(':disabled') || o.disabled ? ' ui-state-disabled' : '') + '">');
 		html.push('<input readonly="readonly" type="text" class="ui-state-default" value="'+ o.noneSelectedText +'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
-		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-bl ui-corner-br ui-corner-tr">');
+		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-all">');
 	
 		if(o.showHeader){
 			html.push('<div class="ui-widget-header ui-helper-clearfix ui-corner-all ui-multiselect-header">');
