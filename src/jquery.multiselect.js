@@ -57,7 +57,7 @@
 				};
 				
 				html.push('<li class="' + liClasses.join(' ') + '">');
-				html.push('<label class="' + labelClasses.join(' ') + '"><input type="checkbox" name="' + $select.attr('name') + '" value="' + value + '" title="' + title + '"');
+				html.push('<label class="' + labelClasses.join(' ') + '"><input type="checkbox" name="' + select.name + '" value="' + value + '" title="' + title + '"');
 				if($this.is(':selected')){
 					html.push(' checked="checked"');
 				};
@@ -308,7 +308,7 @@
 			// if the click originated from the label, stop the click event and manually toggle the checked state
 			if(label){
 				e.preventDefault();
-				$this.attr('checked', $this.is(':checked') ? '' : 'checked');
+				this.checked = this.checked ? false : true;
 			};
 		
 			o.onCheck.call(this);
