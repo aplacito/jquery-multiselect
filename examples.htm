@@ -178,8 +178,33 @@ $(function(){
 		<option value="option9">Option 9</option>
 		</select>
 	</p>
-
-	<h2>Example 3: Optgroup support</h2>
+	
+	<h2>Example 3: Entire widget disabled by default</h2>
+	<p>
+		<select id="example11" name="example11" class="multiselect" disabled="disabled" multiple="multiple" size="5">
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		</select>
+		<br /><button type="button" name="toggle">Toggle Disabled</button>
+	</p>
+	
+	<h2>Example 4: Open by default</h2>
+	<p><b>NOTE:</b> This widget is designed to operate like normal HTML select boxes.  Therefore, clicking on the document or on another
+	select will close all other open selects.</p>
+	<p>
+		<select id="example12" name="example12" multiple="multiple" size="5">
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		</select>
+	</p>
+	
+	<h2>Example 5: Optgroup support</h2>
 	<p>Click on an optgroup's heading to toggle the checked state of the entire group.</p>
 	<p>
 		<select name="example3" class="multiselect" multiple="multiple" size="5">
@@ -197,8 +222,7 @@ $(function(){
 		</select>
 	</p>
 
-
-	<h2>Example 4: onOpen, onCheck, onCheckAll, onUncheckAll, and onOptgroupToggle callbacks</h2>
+	<h2>Example 6: onOpen, onCheck, onCheckAll, onUncheckAll, and onOptgroupToggle callbacks</h2>
 	<p>
 		<p id="callback">Callback target</p>
 		<select name="example4" id="example4" multiple="multiple" size="5">
@@ -216,7 +240,7 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 5: Positioning set to &quot;middle&quot;; no header with a CSS drop shadow</h2>
+	<h2>Example 7: Positioning set to &quot;middle&quot;; no header with a CSS drop shadow</h2>
 	<p>
 		<select name="example5" id="example5" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
@@ -229,7 +253,7 @@ $(function(){
 		</select>
 	</p>
 	
-	<h2>Example 6: Displaying options in a list</h2>
+	<h2>Example 8: Displaying options in a list</h2>
 	<p>A function is passed to the <code>selectedText</code> parameter which returns a list of the items selected,
 	as long as 5 or less checkboxes are checked.  Once 5 or more checkboxes have been checked, <code>selectedText</code>
 	returns the number checked.  <code>minWidth</code> is set to 400 (pixels).</p>
@@ -246,7 +270,7 @@ $(function(){
 		</select>
 	</p>
 
-	<h2>Example 7: &quot;Check All&quot; text changed; input displays the number checked &amp; the total number of checkboxes</h2>
+	<h2>Example 9: &quot;Check All&quot; text changed; input displays the number checked &amp; the total number of checkboxes</h2>
 	<p>
 		<select name="example7" id="example7" multiple="multiple" size="5">
 		<option value=""></option>
@@ -260,9 +284,9 @@ $(function(){
 		</select>
 	</p>
 	
-	<h2>Example 8: Multiple instances in-line</h2>
+	<h2>Example 10: Multiple instances in-line</h2>
 	<p>
-		<select name="example8" class="multiselect" multiple="multiple" size="5">
+		<select name="example8-1" class="multiselect" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
 		<option value="option3">Option 3</option>
@@ -270,7 +294,7 @@ $(function(){
 		<option value="option5">Option 5</option>
 		</select>
 
-		<select name="example9" class="multiselect" multiple="multiple" size="5">
+		<select name="example8-2" class="multiselect" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
 		<option value="option3">Option 3</option>
@@ -278,32 +302,7 @@ $(function(){
 		<option value="option5">Option 5</option>
 		</select>
 
-		<select name="example10" class="multiselect" multiple="multiple" size="5">
-		<option value="option1">Option 1</option>
-		<option value="option2">Option 2</option>
-		<option value="option3">Option 3</option>
-		<option value="option4">Option 4</option>
-		<option value="option5">Option 5</option>
-		</select>
-	</p>
-	
-	
-	<h2>Example 9: Entire widget disabled by default</h2>
-	<p>
-		<select id="example11" name="example11" class="multiselect" disabled="disabled" multiple="multiple" size="5">
-		<option value="option1">Option 1</option>
-		<option value="option2">Option 2</option>
-		<option value="option3">Option 3</option>
-		<option value="option4">Option 4</option>
-		<option value="option5">Option 5</option>
-		</select>
-		<br /><button type="button" name="toggle">Toggle Disabled</button>
-	</p>
-
-	
-	<h2>Example 10: Open by default</h2>
-	<p>
-		<select id="example12" name="example12" multiple="multiple" size="5">
+		<select name="example8-3" class="multiselect" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
 		<option value="option3">Option 3</option>
