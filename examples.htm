@@ -72,21 +72,7 @@ $(function(){
 	// Options displayed in comma-separated list
 	$("#example6").multiSelect({ 
 		minWidth:400,
-		selectedText: function(numChecked, numTotal, checkedItems){
-		
-			// if there are 5 or less items checked, show them in a list.
-			if(numChecked <= 5){
-			
-				return $(checkedItems).map(function(){
-					return this.title;
-				}).get().join(', ');
-				
-
-			// otherwise, just show the number checked
-			} else {
-				return numChecked + ' checked';
-			}
-		}
+		selectedList:5
 	});
 	
 	// 'Check All' text changed
@@ -102,7 +88,13 @@ $(function(){
 	// disabled
 	var $example11 = $("#example11");
 	$example11.siblings("button").click(function(){
-		$example11.toggleClass("ui-state-disabled");
+		$example11
+			.removeClass("ui-state-disabled")
+			.find("input")
+			.removeAttr("disabled")
+			.next('div.ui-multiselect-options')
+			.find('li, label')
+			.removeClass("ui-state-disabled");
 	});
 	
 	// open by default

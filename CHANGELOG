@@ -54,7 +54,7 @@ Version 0.5pre (under development)
 - Fixed: better positioning of the header links.
 - Fixed: border issue on the text input when inside a div.ui-widget.content.
 - Fixed: options menu now has the ui-corner-all class.  Previously all corners except top left were rounded... for some reason.
-- Removed: selectedList option.  Use selectedText instead.
+
 
 
 

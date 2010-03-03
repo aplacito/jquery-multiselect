@@ -15,12 +15,12 @@
 		opts = $.extend({}, $.fn.multiSelect.defaults, opts);
 
 		return this.each(function(){
-			new MultiSelect(this, opts);
+			 return new MultiSelect(this, opts);
 		});
 	};
 	
 	var MultiSelect = function(select,o){
-		var $select = $original = $(select), $options, $labels, html = [], optgroups = [];
+		var $select = $original = $(select), $options, $header, $labels, html = [], optgroups = [];
 		
 		html.push('<a id="'+ select.id +'" class="ui-multiselect ui-widget ui-state-default ui-corner-all' + ($select.is(':disabled') || o.disabled ? ' ui-state-disabled' : '') + '">');
 		html.push('<input readonly="readonly" type="text" class="ui-state-default" value="'+ o.noneSelectedText +'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
@@ -34,7 +34,7 @@
 			html.push('<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close ui-icon ui-icon-circle-close"></a></li>');
 			html.push('</ul>');
 			html.push('</div>');
-		};
+		}
 		
 		// build options
 		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
@@ -47,25 +47,25 @@
 				if($.inArray(label,optgroups) === -1){
 					html.push('<li class="ui-multiselect-optgroup-label"><a href="#">' + label + '</a></li>');
 					optgroups.push(label);
-				};
-			};
-			
+				}
+			}
+		
 			if(len > 0){
 				if(isDisabled){
 					labelClasses.push('ui-state-disabled');
 					liClasses.push('ui-multiselect-disabled');
-				};
+				}
 				
 				html.push('<li class="' + liClasses.join(' ') + '">');
 				html.push('<label class="' + labelClasses.join(' ') + '"><input type="checkbox" name="' + select.name + '" value="' + value + '" title="' + title + '"');
 				if($this.is(':selected')){
 					html.push(' checked="checked"');
-				};
+				}
 				if(isDisabled){
 					html.push(' disabled="disabled"');
-				};
+				}
 				html.push(' />' + title + '</label></li>');
-			};
+			}
 		});
 		html.push('</ul></div>');
 
@@ -80,7 +80,7 @@
 		if( /\d/.test(o.minWidth) && totalWidth < o.minWidth){
 			inputWidth = o.minWidth-iconWidth;
 			totalWidth = o.minWidth;
-		};
+		}
 		
 		// set widths
 		$select.width(totalWidth).find('input').width(inputWidth);
@@ -99,11 +99,11 @@
 					var checkAll = $this.hasClass('ui-multiselect-all');
 					$options.trigger('toggleChecked', [(checkAll ? true : false)]);
 					o[ checkAll ? 'onCheckAll' : 'onUncheckAll']['call'](this);
-				};
+				}
 			
 				e.preventDefault();
 			});
-		};
+		}
 		
 		var updateSelected = function(){
 			var $inputs = $labels.find('input'),
@@ -114,10 +114,14 @@
 			if(numChecked === 0){
 				value = o.noneSelectedText;
 			} else {
-				value = $.isFunction(o.selectedText)
-					? o.selectedText.call(this, numChecked, $inputs.length, $checked.get())
-					: o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
-			};
+				if($.isFunction(o.selectedText)){
+					value = o.selectedText.call(this, numChecked, $inputs.length, $checked.get());
+				} else if( /\d/.test(o.selectedList) && o.selectedList > 0 && numChecked <= o.selectedList){
+					value = $checked.map(function(){ return this.title; }).get().join(', ');
+				} else {
+					value = o.selectedText.replace('#', numChecked).replace('#', $inputs.length);
+				}
+			}
 			
 			$select.find('input').val(value).attr('title', value);
 			return value;
@@ -138,7 +142,7 @@
 					case 0: // space
 						$options.trigger('toggle');
 						break;
-				};
+				}
 			},
 			mouseenter: function(){
 				if(!$select.hasClass('ui-state-disabled')){
@@ -176,7 +180,7 @@
 				} else {
 					$select.removeClass('ui-state-active').trigger('mouseout');
 					$options.fadeOut(o.fadeSpeed);
-				};
+				}
 			},
 			'open': function(e, closeOthers){
 				
@@ -193,7 +197,7 @@
 				// hide all other options
 				if(closeOthers || typeof closeOthers === 'undefined'){
 					$options.trigger('close', [true]);
-				};
+				}
 				
 				// calculate positioning
 				if(o.position === 'middle'){
@@ -202,10 +206,10 @@
 					top = (offset.top-$options.outerHeight());
 				} else {
 					top = (offset.top+$select.outerHeight());
-				};
+				}
 				
 				// calculate the width of the options menu
-				width = $select.width()-parseInt($options.css('padding-left'))-parseInt($options.css('padding-right'));
+				width = $select.width()-parseInt($options.css('padding-left'),10)-parseInt($options.css('padding-right'),10);
 				
 				// select the first option
 				$labels.filter('label:first').trigger('mouseenter').trigger('focus');
@@ -224,7 +228,7 @@
 				// set the height of the checkbox container
 				if(o.maxHeight){
 					$container.css('height', o.maxHeight);
-				};
+				}
 				
 				o.onOpen.call($options[0]);
 			},
@@ -250,7 +254,7 @@
 					
 				} else {
 					$next.find('label').trigger('mouseenter');
-				};
+				}
 			},
 			'toggleChecked': function(e, flag, group){
 				var $inputs = (group && group.length) ? group : $labels.find('input');
@@ -296,7 +300,7 @@
 						e.preventDefault();
 						$(this).click();
 						break;
-				};
+				}
 			}
 		})
 		.find('input')
@@ -310,7 +314,7 @@
 			if(label){
 				e.preventDefault();
 				this.checked = this.checked ? false : true;
-			};
+			}
 		
 			o.onCheck.call(this);
 			updateSelected();
@@ -322,8 +326,9 @@
 		// apply bgiframe if available
 		if($.fn.bgiframe){
 			$options.bgiframe();
-		};
+		}
 		
+		// open by default?
 		if(o.state === 'open'){
 			$options.trigger('open', [false]);
 		}
@@ -338,7 +343,7 @@
 
 		if(!$target.closest('div.ui-multiselect-options').length && !$target.parent().hasClass('ui-multiselect')){
 			$('div.ui-multiselect-options').trigger('close', [true]);
-		};
+		}
 	});
 
 	// default options
@@ -350,6 +355,7 @@
 		unCheckAllText: 'Uncheck all',
 		noneSelectedText: 'Select options',
 		selectedText: '# selected',
+		selectedList: 0,
 		position: 'bottom', /* top|middle|bottom */
 		shadow: false,
 		fadeSpeed: 200,
