@@ -20,9 +20,9 @@
 	};
 	
 	var MultiSelect = function(select,o){
-		var $select = $original = $(select), $options, $header, $labels, html = [], optgroups = [];
+		var $select = $original = $(select), $options, $header, $labels, html = [], optgroups = [], isDisabled = $select.is(':disabled');
 		
-		html.push('<a id="'+ select.id +'" class="ui-multiselect ui-widget ui-state-default ui-corner-all' + ($select.is(':disabled') || o.disabled ? ' ui-state-disabled' : '') + '">');
+		html.push('<a id="'+ select.id +'" class="ui-multiselect ui-widget ui-state-default ui-corner-all' + (isDisabled || o.disabled ? ' ui-state-disabled' : '') + '">');
 		html.push('<input readonly="readonly" type="text" class="ui-state-default" value="'+ o.noneSelectedText +'" /><span class="ui-icon ui-icon-triangle-1-s"></span></a>');
 		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-all">');
 	
@@ -38,6 +38,13 @@
 		
 		// build options
 		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
+		
+		// if this select is disabled, remove the actual disabled attribute and let .ui-state-disabled handle it.
+		// workaround for #6211, where options in webkit inherit the select's disabled property
+		if(isDisabled){
+			$select.removeAttr("disabled");
+		}
+		
 		$select.find('option').each(function(){
 			var $this = $(this), title = $this.html(), value = this.value, len = value.length, $parent = $this.parent(), hasOptGroup = $parent.is('optgroup'), isDisabled = $this.is(':disabled'), labelClasses = ['ui-corner-all'], liClasses = [];
 			

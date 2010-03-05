@@ -88,13 +88,7 @@ $(function(){
 	// disabled
 	var $example11 = $("#example11");
 	$example11.siblings("button").click(function(){
-		$example11
-			.removeClass("ui-state-disabled")
-			.find("input")
-			.removeAttr("disabled")
-			.next('div.ui-multiselect-options')
-			.find('li, label')
-			.removeClass("ui-state-disabled");
+		$example11.toggleClass("ui-state-disabled");
 	});
 	
 	// open by default
