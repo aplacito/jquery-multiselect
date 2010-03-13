@@ -38,7 +38,7 @@ Version 0.4.1 - 02/15/2010
 ==============================================
 - Fixed: graceful handling of form resets with pre-selected options, cross browser.
 
-Version 0.5pre (under development)
+Version 0.5 - 03/13/2010
 ==============================================
 - Added: support for disabled selects (entire widget).
 - Added: the widget now inherits the original ID of the select box.
@@ -52,9 +52,9 @@ Version 0.5pre (under development)
 - Fixed: The icons in the "check all" and "uncheck all" header links were not toggling correctly.
 - Fixed: removed some unused vars.
 - Fixed: better positioning of the header links.
-- Fixed: border issue on the text input when inside a div.ui-widget.content.
+- Fixed: border issue on the text input when inside a div.ui-widget-content.
 - Fixed: options menu now has the ui-corner-all class.  Previously all corners except top left were rounded... for some reason.
-
+- Fixed: use position() instead of offset() when inside a .ui-widget-content class.  offset() won't position the dropdown correctly.
 
 
 

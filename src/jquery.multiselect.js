@@ -1,5 +1,5 @@
 /*
- * jQuery MultiSelect Plugin 0.4.1
+ * jQuery MultiSelect Plugin 0.5
  * Copyright (c) 2010 Eric Hynds
  *
  * http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/
