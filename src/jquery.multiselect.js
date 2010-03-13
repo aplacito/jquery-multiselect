@@ -39,8 +39,12 @@
 		// build options
 		html.push('<ul class="ui-multiselect-checkboxes ui-helper-reset">');
 		
-		// if this select is disabled, remove the actual disabled attribute and let .ui-state-disabled handle it.
-		// workaround for #6211, where options in webkit inherit the select's disabled property
+		/* 
+			If this select is disabled, remove the actual disabled attribute and let themeroller's .ui-state-disabled class handle it.
+			This is a workaround for jQuery bug #6211 where options in webkit inherit the select's disabled property.  This
+			won't achieve the same level of 'disabled' behavior (the checkboxes will still be present in form submission), 
+			but it at least gives you a way to emulate the UI. 
+		*/
 		if(isDisabled){
 			$select.removeAttr("disabled");
 		}
