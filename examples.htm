@@ -128,23 +128,21 @@ $(function(){
 	<h2>Example 1: Basic</h2>
 
 	<p>
-		<div id="dialog">
-			<select name="example1" class="multiselect" multiple="multiple" size="5">
-			<option value=""></option>
-			<option value="option1">Option 1</option>
-			<option value="option2">Option 2</option>
-			<option value="option3">Option 3</option>
-			<option value="option4">Option 4</option>
-			<option value="option5">Option 5</option>
-			<option value="option5">Option 6</option>
-			<option value="option5">Option 7</option>
-			<option value="option5">Option 8</option>
-			<option value="option5">Option 9</option>
-			<option value="option5">Option 10</option>
-			<option value="option5">Option 11</option>
-			<option value="option5">Option 12</option>
-			</select>
-		</div>
+		<select name="example1" class="multiselect" multiple="multiple" size="5">
+		<option value=""></option>
+		<option value="option1">Option 1</option>
+		<option value="option2">Option 2</option>
+		<option value="option3">Option 3</option>
+		<option value="option4">Option 4</option>
+		<option value="option5">Option 5</option>
+		<option value="option5">Option 6</option>
+		<option value="option5">Option 7</option>
+		<option value="option5">Option 8</option>
+		<option value="option5">Option 9</option>
+		<option value="option5">Option 10</option>
+		<option value="option5">Option 11</option>
+		<option value="option5">Option 12</option>
+		</select>
 	</p>
 	
 	<h2>Example 2: Pre-selected &amp; disabled options with a custom width</h2>
@@ -166,7 +164,11 @@ $(function(){
 	</p>
 	
 	<h2>Example 3: Disable the entire widget</h2>
-	<p>The "Toggle Disabled" button simply toggles the class ui-state-disabled on the select.</p>
+	<p>
+		The &quot;Toggle Disable&quot; button simply toggles the class ui-state-disabled on the select.  It does NOT use the disabled
+		attribute because of <a href="http://dev.jquery.com/ticket/6211">bug #6211</a>.  Be aware of this because the checkboxes might still be passed
+		to the server when the widget is disabled.
+	</p>
 	<p>
 		<select id="example11" name="example11" class="multiselect" disabled="disabled" multiple="multiple" size="5">
 		<option value="option1">Option 1</option>
