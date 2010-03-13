@@ -200,7 +200,10 @@
 					return;
 				}
 				
-				var offset = $select.offset(), $container = $options.find('ul:last'), top, width;
+				// use position() if inside ui-widget-content, because offset() won't cut it.
+				var offset = $select[ $select.closest('div.ui-widget-content').length ? 'position' : 'offset'](), 
+					$container = $options.find('ul:last'), 
+					top, width;
 				
 				// calling select is active
 				$select.addClass('ui-state-active');
