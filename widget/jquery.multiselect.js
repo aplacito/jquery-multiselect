@@ -120,7 +120,7 @@ $.widget("ui.multiselect", {
 		this.$labels	= this.$menu.find('label');
 		
 		// calculate widths
-		this.width = this.$button.outerWidth();
+		this.width = this.element.outerWidth();
 		if( /\d/.test(o.minWidth) && this.width < o.minWidth){
 			this.width = o.minWidth;
 		}
@@ -314,7 +314,7 @@ $.widget("ui.multiselect", {
 		this.$button.addClass('ui-state-active');
 		
 		// select the first option
-		this.$labels.filter('label:first').trigger('mouseenter').trigger('focus');
+		this.$labels.first().trigger('mouseover').find('input').trigger('focus');
 		
 		// figure out opening effects/speeds
 		if($.isArray(o.show)){
@@ -326,7 +326,7 @@ $.widget("ui.multiselect", {
 		// 2 positions are necessary for some effects.  very buggy to support all cases otherwise, unfortunately
 		this.$menu
 		.css({ top:0, left:0 })
-		.width( self.width-parseInt(self.$menu.css('padding-left'),10)-parseInt(self.$menu.css('padding-right'),10)-parseInt(self.$button.css('padding-left'),10) )
+		.width( self.width-parseInt(self.$menu.css('padding-left'),10)-parseInt(self.$menu.css('padding-right'),10)-2 )
 		.position({ my:"left top", at:"left bottom", of:self.$menu.prev() })
 		.show(effect, speed);
 		//.position({ my:"left top", at:"left bottom", of:self.$menu.prev() });
