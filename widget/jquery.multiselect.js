@@ -362,19 +362,25 @@ $.widget("ui.multiselect", {
 	},
 	
 	close: function( which ){
-		var self = this, o = this.options, effect = o.hide, speed = this.speed;
-		which = which || "";
 		
-		if(which === "others"){
-			$('button.ui-multiselect.ui-state-active').not(this.$button).each(function(){
+		// close all but the open one
+		if(which === "others" || which === "all"){
+			var $open = $('button.ui-multiselect.ui-state-active');
+			
+			// do not include this instance if closing others
+			if(which === "others"){
+				$open = $open.not(this.$button);
+			}
+			
+			$open.each(function(){
 				$(this).data('selectelement').multiselect('close');
 			});
-		} else if(which === "all"){
-			$('button.ui-multiselect.ui-state-active').each(function(){
-				$(this).data('selectelement').multiselect('close');
-			});
+			
+		// close this one
 		} else {
 		
+			var self = this, o = this.options, effect = o.hide, speed = this.speed;
+			
 			// figure out opening effects/speeds
 			if($.isArray(o.hide)){
 				effect = o.hide[0];
@@ -386,7 +392,6 @@ $.widget("ui.multiselect", {
 			self._isOpen = false;
 		
 			o.close.call( this.$menu[0] );
-			
 		}
 	},
 	
