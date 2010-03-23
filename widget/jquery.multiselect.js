@@ -58,7 +58,7 @@ $.widget("ui.multiselect", {
 			var $target = $(e.target);
 
 			if(self._isOpen && !$target.closest('div.ui-multiselect-options').length && !$target.is('button.ui-multiselect')){
-				self.close(e);
+				self.close("all");
 			}
 		});
 	},
@@ -67,15 +67,15 @@ $.widget("ui.multiselect", {
 	_generate: function(){
 		var self = this, el = this.element, o = this.options, html = [], optgroups = [], isDisabled = el.is(':disabled');
 		
-		html.push('<button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all'+isDisabled+'"><span>'+o.noneSelectedText+'</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
-		html.push('<div class="ui-multiselect-options' + (o.shadow ? ' ui-multiselect-shadow' : '') + ' ui-widget ui-widget-content ui-corner-all">');
+		html.push('<button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all'+ (isDisabled ? ' ui-state-disabled' : '') +'"><span>'+o.noneSelectedText+'</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
+		html.push('<div class="ui-multiselect-options ui-widget ui-widget-content ui-corner-all">');
 	
 		if(o.showHeader){
 			html.push('<div class="ui-widget-header ui-helper-clearfix ui-corner-all ui-multiselect-header">');
 			html.push('<ul class="ui-helper-reset">');
 			html.push('<li><a class="ui-multiselect-all" href=""><span class="ui-icon ui-icon-check"></span>' + o.checkAllText + '</a></li>');
 			html.push('<li><a class="ui-multiselect-none" href=""><span class="ui-icon ui-icon-closethick"></span>' + o.unCheckAllText + '</a></li>');
-			html.push('<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close ui-icon ui-icon-circle-close"></a></li>');
+			html.push('<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close"><span class="ui-icon ui-icon-circle-close"></span></a></li>');
 			html.push('</ul>');
 			html.push('</div>');
 		}
@@ -173,7 +173,9 @@ $.widget("ui.multiselect", {
 
 		// header links
 		if(this.options.showHeader){
-			this.$menu.find('div.ui-multiselect-header a').click(function(e){
+			this.$menu
+			.find('div.ui-multiselect-header a')
+			.bind('click', function(e){
 				var $this = $(this);
 			
 				// close link
@@ -321,7 +323,7 @@ $.widget("ui.multiselect", {
 			return;
 		}
 		
-		this._closeOthers();
+		this.close("others");
 
 		// use position() if inside ui-widget-content, because offset() won't cut it.
 		var self = this,
@@ -349,7 +351,7 @@ $.widget("ui.multiselect", {
 		.width( self.width-parseInt(self.$menu.css('padding-left'),10)-parseInt(self.$menu.css('padding-right'),10)-parseInt(self.$button.css('padding-left'),10) )
 		.position({ my:"left top", at:"left bottom", of:self.$menu.prev() })
 		.show(effect, speed)
-		.position({ my:"left top", at:"left bottom", of:self.$menu.prev() });
+		//.position({ my:"left top", at:"left bottom", of:self.$menu.prev() });
 		
 		this._isOpen = true;
 		
@@ -359,26 +361,33 @@ $.widget("ui.multiselect", {
 		o.open.call( this.$menu[0] );
 	},
 	
-	close: function(){
+	close: function( which ){
 		var self = this, o = this.options, effect = o.hide, speed = this.speed;
+		which = which || "";
 		
-		// figure out opening effects/speeds
-		if($.isArray(o.hide)){
-			effect = o.hide[0];
-			speed = o.hide[1] || this.speed;
+		if(which === "others"){
+			$('button.ui-multiselect.ui-state-active').not(this.$button).each(function(){
+				$(this).data('selectelement').multiselect('close');
+			});
+		} else if(which === "all"){
+			$('button.ui-multiselect.ui-state-active').each(function(){
+				$(this).data('selectelement').multiselect('close');
+			});
+		} else {
+		
+			// figure out opening effects/speeds
+			if($.isArray(o.hide)){
+				effect = o.hide[0];
+				speed = o.hide[1] || this.speed;
+			}
+		
+			this.$menu.hide(effect, speed);
+			this.$button.removeClass('ui-state-active').trigger('blur').trigger('mouseleave');
+			self._isOpen = false;
+		
+			o.close.call( this.$menu[0] );
+			
 		}
-		
-		this.$menu.hide(effect, speed);
-		this.$button.removeClass('ui-state-active').trigger('blur').trigger('mouseleave');
-		self._isOpen = false;
-		
-		o.close.call( this.$menu[0] );
-	},
-	
-	_closeOthers: function(){
-		$('button.ui-multiselect.ui-state-active').not(this.$button).each(function(){
-			$(this).data('selectelement').multiselect('close');
-		});
 	},
 	
 	toggle: function(){
