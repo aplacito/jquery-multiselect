@@ -374,7 +374,7 @@ $.widget("ui.multiselect", {
 		}
 	},
 
-	// move up or down within the menu
+	// move up or down within the menu.  TODO make private?
 	traverse: function(keycode, start){
 		var $start = $(start),
 			moveToLast = (keycode === 38 || keycode === 37) ? true : false,
@@ -403,8 +403,15 @@ $.widget("ui.multiselect", {
 		this._updateSelected();
 	},
 	
-	// disable entire widget
-	disable: function(flag){
+	enable: function(){
+		this._toggleDisabled(false);
+	},
+	
+	disable: function(){
+		this._toggleDisabled(true);
+	},
+	
+	_toggleDisabled: function(flag){
 		this.$button.attr('disabled', (flag ? 'disabled' : ''))[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
 		this.$menu.find('input').attr('disabled', (flag ? 'disabled' : '')).parent()[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
 	},
@@ -419,9 +426,9 @@ $.widget("ui.multiselect", {
 	// react to option changes after initialization
 	_setOption: function( key, value ){
 		var self = this;
-		
 		this.options[ key ] = value;
 		
+		/*
 		switch(key){
 			case "open":
 				self.open();
@@ -429,10 +436,13 @@ $.widget("ui.multiselect", {
 			case "close":
 				self.close();
 				break;
-			case "disable":
-				self.disable(value);
+			case "enable":
+				self._toggleDisabled(false);
 				break;
-		}
+			case "disable":
+				self._toggleDisabled(true);
+				break;
+		}*/
 
 	}
 });

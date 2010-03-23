@@ -76,7 +76,7 @@ $(function(){
 	var $widget = $("#example-disabled").multiselect(), state = true;
 	$("#toggle-disabled").click(function(){
 		state = !state;
-		$widget.multiselect("disable", state);
+		$widget.multiselect(state ? 'disable' : 'enable');
 	});
 	
 	$("form").submit(function(e){
@@ -172,7 +172,7 @@ $(function(){
 			<option value="option4">Option 4</option>
 			<option value="option5">Option 5</option>
 			</select>
-			<br /><button type="button" name="toggle" id="toggle-disabled">Toggle Disabled</button>
+			<div><button type="button" name="toggle" id="toggle-disabled">Toggle Disabled</button></div>
 		</p>
 	
 
