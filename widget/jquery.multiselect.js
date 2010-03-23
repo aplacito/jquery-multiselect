@@ -19,9 +19,6 @@
 (function($){
 
 $.widget("ui.multiselect", {
-
-	speed: 400, // default speed for effects.  UI's default is 400
-	_isOpen: false, 
 	
 	// default options
 	options: {
@@ -49,6 +46,8 @@ $.widget("ui.multiselect", {
 		
 		this._generate();
 		this._bindEvents();
+		this.speed = 400; // default speed for effects. UI's default is 400.
+		this._isOpen = false;
 		
 		// update the number of selected elements when the page initially loads, and use that as the defaultValue.  necessary for form resets when options are pre-selected.
 		this.$button[0].defaultValue = this._updateSelected();
@@ -61,6 +60,8 @@ $.widget("ui.multiselect", {
 				self.close("all");
 			}
 		});
+		
+		return this;
 	},
 	
 	// generates new markup, and caches references to important queries in widget properties
@@ -238,7 +239,7 @@ $.widget("ui.multiselect", {
 				case 40: // down
 				case 37: // left
 				case 39: // right
-					self.traverse(e, this);
+					self.traverse(e.keyCode, this);
 					break;
 			
 				case 13: // enter
@@ -374,13 +375,13 @@ $.widget("ui.multiselect", {
 	},
 
 	// move up or down within the menu
-	traverse: function(event, start){
+	traverse: function(keycode, start){
 		var $start = $(start),
-			moveToLast = (event.keyCode === 38 || event.keyCode === 37) ? true : false,
+			moveToLast = (keycode === 38 || keycode === 37) ? true : false,
 			
 			// select the first li that isn't an optgroup label / disabled
 			$next = $start.parent()[moveToLast ? 'prevAll' : 'nextAll']('li:not(.ui-multiselect-disabled, .ui-multiselect-optgroup-label)')[ moveToLast ? 'last' : 'first']();
-
+		
 		// if at the first/last element
 		if(!$next.length){
 			var $container = this.$menu.find('ul:last');
@@ -392,7 +393,7 @@ $.widget("ui.multiselect", {
 			$container.scrollTop( moveToLast ? $container.height() : 0 );
 			
 		} else {
-			$next.find('label').trigger('mouseenter');
+			$next.find('label').trigger('mouseover');
 		}
 	},
 
