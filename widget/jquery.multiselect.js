@@ -135,21 +135,38 @@ $.widget("ui.multiselect", {
 			$menu = this.$menu,
 			$labels = this.$labels,
 			$button = this.$button;
+
+		// expose custom events
+		this.element.bind({
+			'multiselectclose': function(){
+				self.close();
+			},
+			'multiselectopen': function(){
+				self.open();
+			},
+			'multiselectcheckall': function(){
+				// TODO
+			},
+			'multiselectuncheckall': function(){
+				// TODO
+			}
+		});
 		
-		// button
+		// button events
 		$button.bind({
 			click: function(){
-				$menu.trigger('toggle');
+				self[ self._isOpen ? 'close' : 'open' ]();
 			},
 			keypress: function(e){
 				switch(e.keyCode){
 					case 27: // esc
 					case 38: // up
-						self.$menu.trigger('close');
+					case 37: // left
+						self.close();
 						break;
+					case 39: // right
 					case 40: // down
-					case 0: // space
-						self.$menu.trigger('toggle');
+						self.open();
 						break;
 				}
 			},
@@ -173,70 +190,28 @@ $.widget("ui.multiselect", {
 
 		// header links
 		if(this.options.showHeader){
-			this.$menu
-			.find('div.ui-multiselect-header a')
-			.bind('click', function(e){
+			this.$menu.find('div.ui-multiselect-header a').bind('click', function(e){
 				var $this = $(this);
 			
 				// close link
 				if($this.hasClass('ui-multiselect-close')){
-					self.$menu.trigger('close');
+					self.close();
 			
 				// check all / uncheck all
 				} else {
 					var checkAll = $this.hasClass('ui-multiselect-all');
-					self.$menu.trigger('toggleChecked', [(checkAll ? true : false)]);
+					self.toggleChecked(checkAll);
 					self.options[ checkAll ? 'checkAll' : 'uncheckAll']['call'](this);
 				}
 			
 				e.preventDefault();
 			});
 		}
-
-		// bind custom events to the menu
-		$menu.bind({
-			'close': function(){
-				self.close();
-			},
-			'open': function(){
-				self.open();
-			},
-			'toggle': function(){
-				self.toggle();
-			},
-			'traverse': function(e, start, keycode){
-				var $start = $(start), 
-					moveToLast = (keycode === 38 || keycode === 37) ? true : false,
-					
-					// select the first li that isn't an optgroup label / disabled
-					$next = $start.parent()[moveToLast ? 'prevAll' : 'nextAll']('li:not(.ui-multiselect-disabled, .ui-multiselect-optgroup-label)')[ moveToLast ? 'last' : 'first']();
-
-				// if at the first/last element
-				if(!$next.length){
-					var $container = this.$menu.find('ul:last');
-					
-					// move to the first/last
-					this.$menu.find('label')[ moveToLast ? 'last' : 'first' ]().trigger('mouseover');
-					
-					// set scroll position
-					$container.scrollTop( moveToLast ? $container.height() : 0 );
-					
-				} else {
-					$next.find('label').trigger('mouseenter');
-				}
-			},
-			'toggleChecked': function(e, flag, group){
-				var $inputs = (group && group.length) ? group : $labels.find('input');
-				$inputs.not(':disabled').attr('checked', (flag ? 'checked' : '')); 
-				self._updateSelected();
-			}
-		})
-		.find('li.ui-multiselect-optgroup-label a')
-		.click(function(e){
-			// optgroup label toggle support
+		
+		// optgroup label toggle support
+		$menu.find('li.ui-multiselect-optgroup-label a').bind('click', function(e){
 			var $checkboxes = $(this).parent().nextUntil('li.ui-multiselect-optgroup-label').find('input');
-			
-			$menu.trigger('toggleChecked', [ ($checkboxes.filter(':checked').length === $checkboxes.length) ? false : true, $checkboxes]);
+			self.toggleChecked( $checkboxes.filter(':checked').length !== $checkboxes.length, $checkboxes );
 			self.options.optgroupToggle.call(this, $checkboxes.get());
 			e.preventDefault();
 		});
@@ -256,19 +231,19 @@ $.widget("ui.multiselect", {
 		.delegate('label', 'keyup', function(e){
 			switch(e.keyCode){
 				case 27: // esc
-					$menu.trigger('close');
+					self.close();
 					break;
 		
 				case 38: // up
 				case 40: // down
 				case 37: // left
 				case 39: // right
-					$menu.trigger('traverse', [this, e.keyCode]);
+					self.traverse(e, this);
 					break;
 			
 				case 13: // enter
 					e.preventDefault();
-					$(this).click();
+					$(this).trigger('click');
 					break;
 			}
 		})
@@ -294,6 +269,7 @@ $.widget("ui.multiselect", {
 		});
 	},
 
+	// updates the number of selected items in the button
 	_updateSelected: function(){
 		var o = this.options,
 			$inputs = this.$labels.find('input'),
@@ -316,6 +292,7 @@ $.widget("ui.multiselect", {
 		return value;
 	},
 	
+	// open the menu
 	open: function(){
 		
 		// bail if this widget is disabled
@@ -350,7 +327,7 @@ $.widget("ui.multiselect", {
 		.css({ top:0, left:0 })
 		.width( self.width-parseInt(self.$menu.css('padding-left'),10)-parseInt(self.$menu.css('padding-right'),10)-parseInt(self.$button.css('padding-left'),10) )
 		.position({ my:"left top", at:"left bottom", of:self.$menu.prev() })
-		.show(effect, speed)
+		.show(effect, speed);
 		//.position({ my:"left top", at:"left bottom", of:self.$menu.prev() });
 		
 		this._isOpen = true;
@@ -361,7 +338,8 @@ $.widget("ui.multiselect", {
 		o.open.call( this.$menu[0] );
 	},
 	
-	close: function( which ){
+	// close the menu
+	close: function(which){
 		
 		// close all but the open one
 		if(which === "others" || which === "all"){
@@ -394,17 +372,39 @@ $.widget("ui.multiselect", {
 			o.close.call( this.$menu[0] );
 		}
 	},
-	
-	toggle: function(){
-		this.$menu.trigger( this._isOpen ? 'close' : 'open' );
+
+	// move up or down within the menu
+	traverse: function(event, start){
+		var $start = $(start),
+			moveToLast = (event.keyCode === 38 || event.keyCode === 37) ? true : false,
+			
+			// select the first li that isn't an optgroup label / disabled
+			$next = $start.parent()[moveToLast ? 'prevAll' : 'nextAll']('li:not(.ui-multiselect-disabled, .ui-multiselect-optgroup-label)')[ moveToLast ? 'last' : 'first']();
+
+		// if at the first/last element
+		if(!$next.length){
+			var $container = this.$menu.find('ul:last');
+			
+			// move to the first/last
+			this.$menu.find('label')[ moveToLast ? 'last' : 'first' ]().trigger('mouseover');
+			
+			// set scroll position
+			$container.scrollTop( moveToLast ? $container.height() : 0 );
+			
+		} else {
+			$next.find('label').trigger('mouseenter');
+		}
+	},
+
+	toggleChecked: function(flag, group){
+		var $inputs = (group && group.length) ? group : this.$labels.find('input');
+		$inputs.not(':disabled').attr('checked', (flag ? 'checked' : '')); 
+		this._updateSelected();
 	},
 	
 	// disable entire widget
 	disable: function(flag){
-		// toggles the disabled attribute & the ui-state-disabled class.
 		this.$button.attr('disabled', (flag ? 'disabled' : ''))[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
-		
-		// also disable the inputs so they aren't passed via form submission
 		this.$menu.find('input').attr('disabled', (flag ? 'disabled' : '')).parent()[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
 	},
 	
@@ -414,7 +414,6 @@ $.widget("ui.multiselect", {
 		// **CHANGE** call the base destroy function
 		$.Widget.prototype.destroy.call( this );
 	},
-
 
 	// react to option changes after initialization
 	_setOption: function( key, value ){

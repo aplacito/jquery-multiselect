@@ -30,7 +30,7 @@ a { color:#001371 }
 $(function(){
 	
 	// default options
-	$("select.multiselect").multiselect();
+	$("#example-basic").multiselect();
 
 	// effects
 	$("#example-effects").multiselect({
@@ -115,7 +115,7 @@ $(function(){
 	
 	<h2>Basic</h2>
 	<p>
-		<select name="example-basic" class="multiselect" multiple="multiple" size="5">
+		<select id="example-basic" name="example-basic" multiple="multiple" size="5">
 		<option value=""></option>
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
