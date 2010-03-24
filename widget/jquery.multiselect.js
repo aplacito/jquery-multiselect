@@ -57,7 +57,7 @@ $.widget("ui.multiselect", {
 			var $target = $(e.target);
 
 			if(self._isOpen && !$target.closest('div.ui-multiselect-options').length && !$target.is('button.ui-multiselect')){
-				self.close("all");
+				self.close('all');
 			}
 		});
 		
