@@ -314,7 +314,9 @@ $.widget("ui.multiselect", {
 		this.$button.addClass('ui-state-active');
 		
 		// select the first option
-		this.$labels.first().trigger('mouseover').find('input').trigger('focus');
+		// triggering both mouseover and mouseover because 1.4.2+ has a bug where triggering mouseover
+		// will actually trigger mouseenter.  the mouseenter trigger is there for when it's eventually fixed
+		this.$labels.first().trigger('mouseover').trigger('mouseenter').find('input').trigger('focus');
 		
 		// figure out opening effects/speeds
 		if($.isArray(o.show)){
