@@ -32,7 +32,7 @@ $.widget("ui.multiselect", {
 		selectedList: 0,
 		show: '',
 		hide: '',
-		state: 'closed',
+		autoOpen: false,
 		check: function(){}, /* when an individual checkbox is clicked */
 		open: function(){}, /* when the select menu is opened */
 		close: function(){}, /* when the select menu is closed */
@@ -137,6 +137,9 @@ $.widget("ui.multiselect", {
 	_init: function(){
 		if(!this.options.header){
 			this.menu.find("div.ui-multiselect-header").hide();
+		}
+		if(this.options.autoOpen){
+			this.open();
 		}
 	},
 	
@@ -313,8 +316,10 @@ $.widget("ui.multiselect", {
 			return;
 		}
 		
-		this.close("others");
-
+		if(!this.options.autoOpen){
+			this.close('others');
+		}
+		
 		// use position() if inside ui-widget-content, because offset() won't cut it.
 		var self = this,
 			$container = this.menu.find('ul:last'),
