@@ -129,6 +129,10 @@ $.widget("ui.multiselect", {
 		this.button.width( this.width );
 	},
 	
+	widget: function(){
+		return this.button;
+	},
+	
 	// binds events. duh
 	_bindEvents: function(){
 	
