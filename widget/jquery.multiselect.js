@@ -427,10 +427,12 @@ $.widget("ui.multiselect", {
 	},
 	
 	destroy: function(){
-		// remove classes and such here
-
-		// **CHANGE** call the base destroy function
+		// remove classes + data
 		$.Widget.prototype.destroy.call( this );
+		
+		this.button.remove();
+		this.menu.remove();
+		this.element.show();
 	},
 
 	// react to option changes after initialization
