@@ -22,11 +22,11 @@ $.widget("ui.multiselect", {
 	
 	// default options
 	options: {
-		header: false,
+		header: true,
 		maxHeight: 175, /* max height of the checkbox container (scroll) in pixels */
 		minWidth: 210, /* min width of the entire widget in pixels. setting to 'auto' will disable */
 		checkAllText: 'Check all',
-		unCheckAllText: 'Uncheck all',
+		uncheckAllText: 'Uncheck all',
 		noneSelectedText: 'Select options',
 		selectedText: '# selected',
 		selectedList: 0,
@@ -50,7 +50,7 @@ $.widget("ui.multiselect", {
 			isDisabled = el.is(':disabled');
 
 		this.speed = 400; // default speed for effects. UI's default is 400.
-		this._isOpen = false;
+		this._isOpen = false; // assume no
 		
 		// the actual button
 		html.push('<button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all'+ (isDisabled ? ' ui-state-disabled' : '') +'"><span>'+o.noneSelectedText+'</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
@@ -61,8 +61,8 @@ $.widget("ui.multiselect", {
 		// header
 		html.push('<div class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix">');
 		html.push('<ul class="ui-helper-reset">');
-		html.push('<li><a class="ui-multiselect-all" href=""><span class="ui-icon ui-icon-check"></span>' + o.checkAllText + '</a></li>');
-		html.push('<li><a class="ui-multiselect-none" href=""><span class="ui-icon ui-icon-closethick"></span>' + o.unCheckAllText + '</a></li>');
+		html.push('<li><a class="ui-multiselect-all" href=""><span class="ui-icon ui-icon-check"></span><span>' + o.checkAllText + '</span></a></li>');
+		html.push('<li><a class="ui-multiselect-none" href=""><span class="ui-icon ui-icon-closethick"></span><span>' + o.uncheckAllText + '</span></a></li>');
 		html.push('<li class="ui-multiselect-close"><a href="" class="ui-multiselect-close"><span class="ui-icon ui-icon-circle-close"></span></a></li>');
 		html.push('</ul>');
 		html.push('</div>');
@@ -316,6 +316,7 @@ $.widget("ui.multiselect", {
 			return;
 		}
 		
+		// allow multiple selects to be open if autoOpen is true, i suppose.
 		if(!this.options.autoOpen){
 			this.close('others');
 		}
@@ -471,6 +472,12 @@ $.widget("ui.multiselect", {
 				break;
 			case "header":
 				this.header(value);
+				break;
+			case "checkAllText":
+				this.menu.find("a.ui-multiselect-all span:last").text(value);
+				break;
+			case "uncheckAllText":
+				this.menu.find("a.ui-multiselect-none span:last").text(value);
 				break;
 		}
 
