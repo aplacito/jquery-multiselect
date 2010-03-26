@@ -56,7 +56,7 @@ $.widget("ui.multiselect", {
 		html.push('<button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all'+ (isDisabled ? ' ui-state-disabled' : '') +'"><span>'+o.noneSelectedText+'</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
 		
 		// start menu contaner
-		html.push('<div class="ui-multiselect-options ui-widget ui-widget-content ui-corner-all">');
+		html.push('<div class="ui-multiselect-menu ui-widget ui-widget-content ui-corner-all">');
 	
 		// header
 		html.push('<div class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix">');
@@ -105,7 +105,7 @@ $.widget("ui.multiselect", {
 		html.push('</ul></div>');
 		
 		this.button		= el.after( html.join('') ).hide().next('button').data('selectelement', el);
-		this.menu		= this.button.next('div.ui-multiselect-options');
+		this.menu		= this.button.next('div.ui-multiselect-menu');
 		this.labels		= this.menu.find('label');
 		
 		// calculate widths
@@ -126,7 +126,7 @@ $.widget("ui.multiselect", {
 		$(document).bind('click', function(e){
 			var $target = $(e.target);
 
-			if(self._isOpen && !$target.closest('div.ui-multiselect-options').length && !$target.is('button.ui-multiselect')){
+			if(self._isOpen && !$target.closest('div.ui-multiselect-menu').length && !$target.is('button.ui-multiselect')){
 				self.close('all');
 			}
 		});
@@ -464,12 +464,6 @@ $.widget("ui.multiselect", {
 		this.options[ key ] = value;
 		
 		switch(key){
-			case "enable":
-				this.enable();
-				break;
-			case "disable":
-				this.disable();
-				break;
 			case "header":
 				this.header(value);
 				break;
