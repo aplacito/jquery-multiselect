@@ -1,5 +1,5 @@
 /*
- * jQuery MultiSelect UI Widget 0.1
+ * jQuery MultiSelect UI Widget 1.0
  * Copyright (c) 2010 Eric Hynds
  *
  * http://www.erichynds.com/jquery/jquery-multiselect-plugin-with-themeroller-support/
@@ -141,10 +141,6 @@ $.widget("ui.multiselect", {
 		if(this.options.autoOpen){
 			this.open();
 		}
-	},
-	
-	widget: function(){
-		return this.button;
 	},
 	
 	// binds events. duh
@@ -307,6 +303,40 @@ $.widget("ui.multiselect", {
 		this.button.attr('title', value).find('span:first').text(value);
 		return value;
 	},
+
+	// move up or down within the menu.  TODO make private?
+	_traverse: function(keycode, start){
+		var $start = $(start),
+			moveToLast = (keycode === 38 || keycode === 37) ? true : false,
+			
+			// select the first li that isn't an optgroup label / disabled
+			$next = $start.parent()[moveToLast ? 'prevAll' : 'nextAll']('li:not(.ui-multiselect-disabled, .ui-multiselect-optgroup-label)')[ moveToLast ? 'last' : 'first']();
+		
+		// if at the first/last element
+		if(!$next.length){
+			var $container = this.menu.find('ul:last');
+			
+			// move to the first/last
+			this.menu.find('label')[ moveToLast ? 'last' : 'first' ]().trigger('mouseover');
+			
+			// set scroll position
+			$container.scrollTop( moveToLast ? $container.height() : 0 );
+			
+		} else {
+			$next.find('label').trigger('mouseover');
+		}
+	},
+
+	_toggleChecked: function(flag, group){
+		var $inputs = (group && group.length) ? group : this.labels.find('input');
+		$inputs.not(':disabled').attr('checked', (flag ? 'checked' : '')); 
+		this._updateSelected();
+	},
+
+	_toggleDisabled: function(flag){
+		this.button.attr('disabled', (flag ? 'disabled' : ''))[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
+		this.menu.find('input').attr('disabled', (flag ? 'disabled' : '')).parent()[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
+	},
 	
 	// open the menu
 	open: function(){
@@ -394,42 +424,12 @@ $.widget("ui.multiselect", {
 		}
 	},
 
-	// move up or down within the menu.  TODO make private?
-	_traverse: function(keycode, start){
-		var $start = $(start),
-			moveToLast = (keycode === 38 || keycode === 37) ? true : false,
-			
-			// select the first li that isn't an optgroup label / disabled
-			$next = $start.parent()[moveToLast ? 'prevAll' : 'nextAll']('li:not(.ui-multiselect-disabled, .ui-multiselect-optgroup-label)')[ moveToLast ? 'last' : 'first']();
-		
-		// if at the first/last element
-		if(!$next.length){
-			var $container = this.menu.find('ul:last');
-			
-			// move to the first/last
-			this.menu.find('label')[ moveToLast ? 'last' : 'first' ]().trigger('mouseover');
-			
-			// set scroll position
-			$container.scrollTop( moveToLast ? $container.height() : 0 );
-			
-		} else {
-			$next.find('label').trigger('mouseover');
-		}
-	},
-
-	_toggleChecked: function(flag, group){
-		var $inputs = (group && group.length) ? group : this.labels.find('input');
-		$inputs.not(':disabled').attr('checked', (flag ? 'checked' : '')); 
-		this._updateSelected();
-	},
-
-	_toggleDisabled: function(flag){
-		this.button.attr('disabled', (flag ? 'disabled' : ''))[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
-		this.menu.find('input').attr('disabled', (flag ? 'disabled' : '')).parent()[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
-	},
-	
 	enable: function(){
 		this._toggleDisabled(false);
+	},
+	
+	disable: function(){
+		this._toggleDisabled(true);
 	},
 	
 	checkAll: function(){
@@ -442,14 +442,6 @@ $.widget("ui.multiselect", {
 		this.options.uncheckAll();
 	},
 	
-	disable: function(){
-		this._toggleDisabled(true);
-	},
-	
-	header: function(value){
-		this.menu.find("div.ui-multiselect-header")[ value ? 'show' : 'hide' ]();
-	},
-	
 	destroy: function(){
 		// remove classes + data
 		$.Widget.prototype.destroy.call( this );
@@ -458,20 +450,28 @@ $.widget("ui.multiselect", {
 		this.menu.remove();
 		this.element.show();
 	},
-
+	
+	isOpen: function(){
+		return this._isOpen;
+	},
+	
+	widget: function(){
+		return this.button;
+	},
+	
 	// react to option changes after initialization
 	_setOption: function( key, value ){
 		this.options[ key ] = value;
 		
 		switch(key){
 			case "header":
-				this.header(value);
+				this.menu.find('div.ui-multiselect-header')[ value ? 'show' : 'hide' ]();
 				break;
 			case "checkAllText":
-				this.menu.find("a.ui-multiselect-all span:last").text(value);
+				this.menu.find('a.ui-multiselect-all span').eq(-1).text(value);
 				break;
 			case "uncheckAllText":
-				this.menu.find("a.ui-multiselect-none span:last").text(value);
+				this.menu.find('a.ui-multiselect-none span').eq(-1).text(value);
 				break;
 		}
 
