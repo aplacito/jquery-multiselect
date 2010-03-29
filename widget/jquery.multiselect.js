@@ -48,7 +48,7 @@ $.widget("ui.multiselect", {
 			html = [], 
 			optgroups = [], 
 			isDisabled = el.is(':disabled'),
-			title = $(el).attr('title');
+			title = el.attr('title');
 
 		this.speed = 400; // default speed for effects. UI's default is 400.
 		this._isOpen = false; // assume no
@@ -58,7 +58,7 @@ $.widget("ui.multiselect", {
 		if(title.length){
 			html.push(' title="'+title+'"');
 		}
-		html.push('<span>'+o.noneSelectedText+'</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
+		html.push('><span>' + o.noneSelectedText + '</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
 		
 		// start menu contaner
 		html.push('<div class="ui-multiselect-menu ui-widget ui-widget-content ui-corner-all">');
@@ -175,6 +175,7 @@ $.widget("ui.multiselect", {
 		// button events
 		button.bind({
 			click: function(){
+				// FIXME: webkit doesn't like it when you click on the span inside the button
 				self[ self._isOpen ? 'close' : 'open' ]();
 			},
 			keypress: function(e){
@@ -304,7 +305,7 @@ $.widget("ui.multiselect", {
 			}
 		}
 		
-		this.button.find('span:first').text(value);
+		this.button.find('span').eq(0).text(value);
 		return value;
 	},
 
