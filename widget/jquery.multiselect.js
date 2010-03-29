@@ -47,13 +47,18 @@ $.widget("ui.multiselect", {
 			o = this.options, 
 			html = [], 
 			optgroups = [], 
-			isDisabled = el.is(':disabled');
+			isDisabled = el.is(':disabled'),
+			title = $(el).attr('title');
 
 		this.speed = 400; // default speed for effects. UI's default is 400.
 		this._isOpen = false; // assume no
 		
 		// the actual button
-		html.push('<button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all'+ (isDisabled ? ' ui-state-disabled' : '') +'"><span>'+o.noneSelectedText+'</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
+		html.push('<button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all' + (isDisabled ? ' ui-state-disabled' : '') + '"');
+		if(title.length){
+			html.push(' title="'+title+'"');
+		}
+		html.push('<span>'+o.noneSelectedText+'</span><span class="ui-icon ui-icon-triangle-1-s"></span></button>');
 		
 		// start menu contaner
 		html.push('<div class="ui-multiselect-menu ui-widget ui-widget-content ui-corner-all">');
@@ -136,7 +141,7 @@ $.widget("ui.multiselect", {
 	
 	_init: function(){
 		if(!this.options.header){
-			this.menu.find("div.ui-multiselect-header").hide();
+			this.menu.find('div.ui-multiselect-header').hide();
 		}
 		if(this.options.autoOpen){
 			this.open();
@@ -218,7 +223,6 @@ $.widget("ui.multiselect", {
 		
 			e.preventDefault();
 		});
-
 		
 		// optgroup label toggle support
 		menu.find('li.ui-multiselect-optgroup-label a').bind('click', function(e){
@@ -300,7 +304,7 @@ $.widget("ui.multiselect", {
 			}
 		}
 		
-		this.button.attr('title', value).find('span:first').text(value);
+		this.button.find('span:first').text(value);
 		return value;
 	},
 
