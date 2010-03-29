@@ -112,6 +112,7 @@ $.widget("ui.multiselect", {
 		this.button		= el.after( html.join('') ).hide().next('button').data('selectelement', el);
 		this.menu		= this.button.next('div.ui-multiselect-menu');
 		this.labels		= this.menu.find('label');
+		this.optiontags	= this.element.find("option");
 		
 		// calculate widths
 		this.width = this.element.outerWidth();
@@ -175,7 +176,7 @@ $.widget("ui.multiselect", {
 		// button events
 		button.bind({
 			click: function(){
-				// FIXME: webkit doesn't like it when you click on the span inside the button
+				// FIXME: webkit doesn't like it when you click on the spans inside the button
 				self[ self._isOpen ? 'close' : 'open' ]();
 			},
 			keypress: function(e){
@@ -266,9 +267,10 @@ $.widget("ui.multiselect", {
 		})
 		.delegate('input', 'click', function(e, label){
 			label = label || false;
+			var $this = $(this), val = this.value, action;
 			
 			// bail if this input is disabled
-			if($(this).is(':disabled')){
+			if($this.is(':disabled')){
 				return;
 			}
 			
@@ -278,9 +280,11 @@ $.widget("ui.multiselect", {
 			// if the click originated from the label, stop the click event and manually toggle the checked state
 			if(label){
 				e.preventDefault();
-				this.checked = this.checked ? false : true;
+				this.checked = action = this.checked ? false : true;
 			}
-		
+			
+			// set the original option tag to selected
+			self.optiontags.filter(function(){ return this.value === val; }).attr("selected", action);
 			self.options.check.call(this);
 			self._updateSelected();
 		});
@@ -335,6 +339,7 @@ $.widget("ui.multiselect", {
 	_toggleChecked: function(flag, group){
 		var $inputs = (group && group.length) ? group : this.labels.find('input');
 		$inputs.not(':disabled').attr('checked', (flag ? 'checked' : '')); 
+		this.optiontags.not('disabled').attr('selected', (flag ? 'selected' : ''));
 		this._updateSelected();
 	},
 
